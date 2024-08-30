@@ -8,9 +8,4 @@ public class RSJukeboxBE extends AbstractRSJukeboxBE {
     public RSJukeboxBE(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityRegistry.RS_JUKEBOX.get(), pPos, pBlockState);
     }
-
-    @Override
-    public int getContainerSize() {
-        return 1;
-    }
 }

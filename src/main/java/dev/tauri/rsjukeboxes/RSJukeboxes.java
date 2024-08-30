@@ -1,5 +1,6 @@
 package dev.tauri.rsjukeboxes;
 
+import dev.tauri.rsjukeboxes.packet.RSJPacketHandler;
 import dev.tauri.rsjukeboxes.registry.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,6 +39,7 @@ public class RSJukeboxes {
         BlockEntityRegistry.register(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
+        RSJPacketHandler.init();
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
