@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "rsjukeboxes:block/redstone_jukebox_side",
+    "north": "rsjukeboxes:block/redstone_jukebox_side",
+    "south": "rsjukeboxes:block/redstone_jukebox_side",
+    "west": "rsjukeboxes:block/redstone_jukebox_side",
+    "east": "rsjukeboxes:block/redstone_jukebox_side",
+    "up": "rsjukeboxes:block/redstone_jukebox_top",
+    "down": "rsjukeboxes:block/redstone_jukebox_side"
+  }
+}

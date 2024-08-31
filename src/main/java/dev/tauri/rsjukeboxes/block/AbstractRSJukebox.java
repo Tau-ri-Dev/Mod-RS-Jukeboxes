@@ -32,7 +32,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedItem {
     public AbstractRSJukebox(Properties properties) {
-        super(properties);
+        super(properties.isRedstoneConductor((pState, pLevel, pPos) -> false));
     }
 
     @Override
@@ -53,11 +53,13 @@ public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedI
                 var item = pPlayer.getItemInHand(pHand);
                 if (pState.getValue(JukeboxBlock.HAS_RECORD)) {
                     jukebox.popOutRecord(0);
+                    jukebox.setChanged();
                     return InteractionResult.sidedSuccess(false);
                 }
                 if (item.is(ItemTags.MUSIC_DISCS) && !item.isEmpty()) {
                     jukebox.itemStackHandler.setStackInSlot(0, item.copy());
                     item.shrink(1);
+                    jukebox.setChanged();
                     pPlayer.awardStat(Stats.PLAY_RECORD);
                     return InteractionResult.sidedSuccess(false);
                 }

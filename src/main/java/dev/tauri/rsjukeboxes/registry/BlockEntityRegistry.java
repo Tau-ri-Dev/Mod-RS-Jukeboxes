@@ -1,6 +1,7 @@
 package dev.tauri.rsjukeboxes.registry;
 
 import dev.tauri.rsjukeboxes.blockentity.RSJukeboxBE;
+import dev.tauri.rsjukeboxes.renderer.RepeatingJukeboxRenderer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -22,6 +23,7 @@ public class BlockEntityRegistry {
 
 
     public static final RegistryObject<BlockEntityType<RSJukeboxBE>> RS_JUKEBOX = registerBE("rs_jukebox", RSJukeboxBE::new, BlockRegistry.RS_JUKEBOX_BLOCK);
+    public static final RegistryObject<BlockEntityType<RSJukeboxBE>> REPEATING_JUKEBOX = registerBE("repeating_jukebox", RSJukeboxBE::new, BlockRegistry.REPEATING_JUKEBOX_BLOCK);
 
 
     public static <T extends BlockEntity> RegistryObject<BlockEntityType<T>> registerBE(String name, BlockEntityType.BlockEntitySupplier<T> beSupplier, Supplier<? extends Block> blockSupplier) {
@@ -45,5 +47,6 @@ public class BlockEntityRegistry {
 
     @SubscribeEvent
     public static void registerBERs(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(REPEATING_JUKEBOX.get(), RepeatingJukeboxRenderer::new);
     }
 }

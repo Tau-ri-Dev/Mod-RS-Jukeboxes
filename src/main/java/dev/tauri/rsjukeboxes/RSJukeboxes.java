@@ -39,6 +39,7 @@ public class RSJukeboxes {
         BlockEntityRegistry.register(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
+        modEventBus.addListener(BlockEntityRegistry::registerBERs);
         RSJPacketHandler.init();
     }
 

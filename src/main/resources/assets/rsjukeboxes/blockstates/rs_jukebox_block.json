@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "#inventory": {
+      "model": "rsjukeboxes:block/rs_jukebox_block"
+    },
+    "has_record=false": {
+      "model": "rsjukeboxes:block/rs_jukebox_block"
+    },
+    "has_record=true": {
+      "model": "rsjukeboxes:block/rs_jukebox_block"
+    }
+  }
+}
