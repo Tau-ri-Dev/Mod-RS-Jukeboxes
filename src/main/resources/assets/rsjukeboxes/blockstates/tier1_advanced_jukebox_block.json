@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "has_record=false": {
+      "model": "rsjukeboxes:block/tier1_advanced_jukebox_block"
+    },
+    "has_record=true": {
+      "model": "rsjukeboxes:block/tier1_advanced_jukebox_block"
+    }
+  }
+}

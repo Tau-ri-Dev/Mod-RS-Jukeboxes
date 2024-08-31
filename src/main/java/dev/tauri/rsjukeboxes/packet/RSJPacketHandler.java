@@ -1,6 +1,7 @@
 package dev.tauri.rsjukeboxes.packet;
 
 import dev.tauri.rsjukeboxes.RSJukeboxes;
+import dev.tauri.rsjukeboxes.packet.packets.JukeboxActionPacketToServer;
 import dev.tauri.rsjukeboxes.packet.packets.StateUpdatePacketToClient;
 import dev.tauri.rsjukeboxes.packet.packets.StateUpdateRequestToServer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -43,6 +44,7 @@ public class RSJPacketHandler {
         int index = -1;
         // to server
         registerPacket(StateUpdateRequestToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, StateUpdateRequestToServer::new);
+        registerPacket(JukeboxActionPacketToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, JukeboxActionPacketToServer::new);
 
         // to client
         registerPacket(StateUpdatePacketToClient.class, ++index, NetworkDirection.PLAY_TO_CLIENT, StateUpdatePacketToClient::new);

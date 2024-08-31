@@ -112,7 +112,7 @@ public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedI
     public int getAnalogOutputSignal(BlockState pBlockState, Level pLevel, BlockPos pPos) {
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
         if (blockentity instanceof AbstractRSJukeboxBE jukebox) {
-            Item item = jukebox.getFirstItem().getItem();
+            Item item = jukebox.getPlayingItem().getItem();
             if (item instanceof RecordItem recorditem) {
                 return recorditem.getAnalogOutput();
             }

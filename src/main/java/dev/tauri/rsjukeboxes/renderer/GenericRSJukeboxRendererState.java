@@ -9,6 +9,7 @@ public class GenericRSJukeboxRendererState extends State {
     public long playingStopped;
     public boolean discInserted = false;
     public int discItemId = -1;
+    public int selectedSlot = 0;
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeBoolean(playing);
@@ -16,6 +17,7 @@ public class GenericRSJukeboxRendererState extends State {
         buf.writeInt(discItemId);
         buf.writeLong(playingStarted);
         buf.writeLong(playingStopped);
+        buf.writeInt(selectedSlot);
     }
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -24,5 +26,6 @@ public class GenericRSJukeboxRendererState extends State {
         discItemId = buf.readInt();
         playingStarted = buf.readLong();
         playingStopped = buf.readLong();
+        selectedSlot = buf.readInt();
     }
 }

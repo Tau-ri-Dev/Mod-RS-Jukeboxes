@@ -1,8 +1,5 @@
 {
   "variants": {
-    "#inventory": {
-      "model": "rsjukeboxes:block/repeating_jukebox_block"
-    },
     "has_record=false": {
       "model": "rsjukeboxes:block/repeating_jukebox_block"
     },

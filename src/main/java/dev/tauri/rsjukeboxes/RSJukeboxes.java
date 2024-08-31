@@ -2,6 +2,8 @@ package dev.tauri.rsjukeboxes;
 
 import dev.tauri.rsjukeboxes.packet.RSJPacketHandler;
 import dev.tauri.rsjukeboxes.registry.*;
+import dev.tauri.rsjukeboxes.screen.container.TieredJukeboxGui;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -37,6 +39,7 @@ public class RSJukeboxes {
         BlockRegistry.register(modEventBus);
         TabRegistry.register(modEventBus);
         BlockEntityRegistry.register(modEventBus);
+        MenuTypeRegistry.register(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
         modEventBus.addListener(BlockEntityRegistry::registerBERs);
@@ -47,6 +50,9 @@ public class RSJukeboxes {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+            event.enqueueWork(() -> {
+                MenuScreens.register(MenuTypeRegistry.TIERED_JUKEBOX_MENU_TYPE.get(), TieredJukeboxGui::new);
+            });
         }
     }
 }

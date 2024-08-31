@@ -1,8 +1,7 @@
 package dev.tauri.rsjukeboxes.registry;
 
-import dev.tauri.rsjukeboxes.blockentity.RSJukeboxBE;
-import dev.tauri.rsjukeboxes.blockentity.RepeatingJukeboxBE;
-import dev.tauri.rsjukeboxes.renderer.RepeatingJukeboxRenderer;
+import dev.tauri.rsjukeboxes.blockentity.*;
+import dev.tauri.rsjukeboxes.renderer.TieredJukeboxRenderer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -25,6 +24,9 @@ public class BlockEntityRegistry {
 
     public static final RegistryObject<BlockEntityType<RSJukeboxBE>> RS_JUKEBOX = registerBE("rs_jukebox", RSJukeboxBE::new, BlockRegistry.RS_JUKEBOX_BLOCK);
     public static final RegistryObject<BlockEntityType<RepeatingJukeboxBE>> REPEATING_JUKEBOX = registerBE("repeating_jukebox", RepeatingJukeboxBE::new, BlockRegistry.REPEATING_JUKEBOX_BLOCK);
+    public static final RegistryObject<BlockEntityType<Tier1JukeboxBE>> TIER1_ADVANCED_JUKEBOX = registerBE("tier1_advanced_jukebox", Tier1JukeboxBE::new, BlockRegistry.TIER1_ADVANCED_JUKEBOX_BLOCK);
+    public static final RegistryObject<BlockEntityType<Tier2JukeboxBE>> TIER2_ADVANCED_JUKEBOX = registerBE("tier2_advanced_jukebox", Tier2JukeboxBE::new, BlockRegistry.TIER2_ADVANCED_JUKEBOX_BLOCK);
+    public static final RegistryObject<BlockEntityType<Tier3JukeboxBE>> TIER3_ADVANCED_JUKEBOX = registerBE("tier3_advanced_jukebox", Tier3JukeboxBE::new, BlockRegistry.TIER3_ADVANCED_JUKEBOX_BLOCK);
 
 
     public static <T extends BlockEntity> RegistryObject<BlockEntityType<T>> registerBE(String name, BlockEntityType.BlockEntitySupplier<T> beSupplier, Supplier<? extends Block> blockSupplier) {
@@ -48,6 +50,8 @@ public class BlockEntityRegistry {
 
     @SubscribeEvent
     public static void registerBERs(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(REPEATING_JUKEBOX.get(), RepeatingJukeboxRenderer::new);
+        event.registerBlockEntityRenderer(TIER1_ADVANCED_JUKEBOX.get(), TieredJukeboxRenderer::new);
+        event.registerBlockEntityRenderer(TIER2_ADVANCED_JUKEBOX.get(), TieredJukeboxRenderer::new);
+        event.registerBlockEntityRenderer(TIER3_ADVANCED_JUKEBOX.get(), TieredJukeboxRenderer::new);
     }
 }

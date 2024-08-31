@@ -1,7 +1,6 @@
 package dev.tauri.rsjukeboxes.registry;
 
-import dev.tauri.rsjukeboxes.block.RSJukeboxBlock;
-import dev.tauri.rsjukeboxes.block.RepeatingJukeboxBlock;
+import dev.tauri.rsjukeboxes.block.*;
 import dev.tauri.rsjukeboxes.item.RSJBlockItem;
 import dev.tauri.rsjukeboxes.item.ITabbedItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -20,6 +19,9 @@ public class BlockRegistry {
 
     public static final RegistryObject<Block> RS_JUKEBOX_BLOCK = REGISTER.register("rs_jukebox_block", RSJukeboxBlock::new);
     public static final RegistryObject<Block> REPEATING_JUKEBOX_BLOCK = REGISTER.register("repeating_jukebox_block", RepeatingJukeboxBlock::new);
+    public static final RegistryObject<Block> TIER1_ADVANCED_JUKEBOX_BLOCK = REGISTER.register("tier1_advanced_jukebox_block", Tier1JukeboxBlock::new);
+    public static final RegistryObject<Block> TIER2_ADVANCED_JUKEBOX_BLOCK = REGISTER.register("tier2_advanced_jukebox_block", Tier2JukeboxBlock::new);
+    public static final RegistryObject<Block> TIER3_ADVANCED_JUKEBOX_BLOCK = REGISTER.register("tier3_advanced_jukebox_block", Tier3JukeboxBlock::new);
 
 
     public static void register(IEventBus bus) {
