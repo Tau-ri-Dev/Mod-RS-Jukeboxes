@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " W ",
+    "CJC",
+    "DRD"
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:repeater"
+    },
+    "D": {
+      "item": "minecraft:redstone"
+    },
+    "J": {
+      "item": "rsjukeboxes:rs_jukebox_block"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "W": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "result": {
+    "count": 1,
+    "item": "rsjukeboxes:repeating_jukebox_block"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "rsjukeboxes:tier1_advanced_jukebox_block"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "rsjukeboxes:tier2_advanced_jukebox_block"
+  }
+}
