@@ -46,8 +46,12 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
         return isPlaying;
     }
 
+    public boolean hasPlayableItem() {
+        return hasPlayableItem != null && hasPlayableItem;
+    }
+
     protected boolean isPlaying = false;
-    protected boolean hasPlayableItem = false;
+    protected Boolean hasPlayableItem = null;
     public long playingStarted;
     public long playingStopped;
 
@@ -112,6 +116,7 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
     }
 
     public void stopPlaying() {
+        if (!isPlaying) return;
         isPlaying = false;
         Objects.requireNonNull(this.level).gameEvent(GameEvent.JUKEBOX_STOP_PLAY, this.getBlockPos(), GameEvent.Context.of(this.getBlockState()));
         this.playingStopped = level.getGameTime();
@@ -152,7 +157,7 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
             spawnMusicParticles(level, getBlockPos(), getBlockState());
         }
         boolean hasPlayableItem = !getFirstItem().isEmpty();
-        if (hasPlayableItem != this.hasPlayableItem) {
+        if (this.hasPlayableItem == null || hasPlayableItem != this.hasPlayableItem) {
             setHasRecordBlockState(hasPlayableItem);
             this.hasPlayableItem = hasPlayableItem;
         }
@@ -246,7 +251,6 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
         isPlaying = compound.getBoolean("isPlaying");
         playingStarted = compound.getLong("playingStarted");
         playingStopped = compound.getLong("playingStopped");
-        hasPlayableItem = compound.getBoolean("hasPlayableItem");
     }
 
     @Override
@@ -257,6 +261,5 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
         compound.putBoolean("isPlaying", isPlaying);
         compound.putLong("playingStarted", playingStarted);
         compound.putLong("playingStopped", playingStopped);
-        compound.putBoolean("hasPlayableItem", hasPlayableItem);
     }
 }

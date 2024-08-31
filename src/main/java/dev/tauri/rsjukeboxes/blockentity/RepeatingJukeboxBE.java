@@ -12,21 +12,22 @@ public class RepeatingJukeboxBE extends AbstractRSJukeboxBE {
     protected int tickDelayCoef = 0;
     protected int tickDelayAddition = 0;
 
-    public boolean isPowered(){
+    @SuppressWarnings("unused")
+    public boolean isPowered() {
         return isPowered;
     }
 
-    public void setPowered(boolean powered){
+    public void setPowered(boolean powered) {
         this.isPowered = powered;
         setChanged();
     }
 
-    public void setTickDelayCoef(int value){
+    public void setTickDelayCoef(int value) {
         this.tickDelayCoef = value;
         setChanged();
     }
 
-    public void setTickDelayAddition(int value){
+    public void setTickDelayAddition(int value) {
         this.tickDelayAddition = value;
         setChanged();
     }
@@ -36,19 +37,24 @@ public class RepeatingJukeboxBE extends AbstractRSJukeboxBE {
     }
 
     @Override
-    public long getDelayBetweenRecords(){
+    public long getDelayBetweenRecords() {
         return (16L * tickDelayCoef) + tickDelayAddition;
     }
+
+    public static final int STOP_REDSTONE_LENGTH = 4; //ticks
 
     @Override
     public void tick() {
         super.tick();
-        if(level == null || level.isClientSide) return;
-        if(!isPlaying() && isPowered && hasPlayableItem){
+        if (level == null || level.isClientSide) return;
+        if (!isPlaying() && isPowered && hasPlayableItem) {
             startPlaying();
         }
-        if(isPlaying() && !isPowered){
+        if (isPlaying() && !isPowered) {
             stopPlaying();
+        }
+        if(level.getGameTime() - playingStopped == (STOP_REDSTONE_LENGTH + 1)){
+            this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
         }
     }
 

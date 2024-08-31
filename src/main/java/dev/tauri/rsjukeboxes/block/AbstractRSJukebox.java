@@ -4,18 +4,17 @@ import dev.tauri.rsjukeboxes.blockentity.AbstractRSJukeboxBE;
 import dev.tauri.rsjukeboxes.item.ITabbedItem;
 import dev.tauri.rsjukeboxes.registry.TabRegistry;
 import dev.tauri.rsjukeboxes.util.ITickable;
+import dev.tauri.rsjukeboxes.util.ItemHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.RecordItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.JukeboxBlock;
@@ -29,10 +28,16 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 
 public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedItem {
     public AbstractRSJukebox(Properties properties) {
         super(properties.isRedstoneConductor((pState, pLevel, pPos) -> false));
+    }
+
+    @Override
+    public void appendHoverText(@NotNull ItemStack itemStack, @Nullable BlockGetter blockGetter, @NotNull List<Component> components, @NotNull TooltipFlag tooltipFlag) {
+        ItemHelper.applyGenericToolTip(getDescriptionId(), components, tooltipFlag);
     }
 
     @Override
@@ -51,7 +56,7 @@ public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedI
             BlockEntity blockentity = pLevel.getBlockEntity(pPos);
             if (blockentity instanceof AbstractRSJukeboxBE jukebox) {
                 var item = pPlayer.getItemInHand(pHand);
-                if (pState.getValue(JukeboxBlock.HAS_RECORD)) {
+                if (jukebox.hasPlayableItem()) {
                     jukebox.popOutRecord(0);
                     jukebox.setChanged();
                     return InteractionResult.sidedSuccess(false);

@@ -48,15 +48,14 @@ public class RepeatingJukeboxBlock extends AbstractRSJukebox {
     }
 
 
+    @Override
     @ParametersAreNonnullByDefault
     public int getSignal(BlockState pState, BlockGetter pLevel, BlockPos pPos, Direction pDirection) {
-        if (pDirection != Direction.SOUTH) return 0;
+        if (pDirection.getOpposite() != Direction.SOUTH) return 0;
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
         if (blockentity instanceof RepeatingJukeboxBE jukebox) {
-            if(jukebox.getLevel() == null) return 0;
-            if (jukebox.isPlaying() && (jukebox.getLevel().getGameTime() - jukebox.playingStopped) > 4) {
-                return 0;
-            } else if ((jukebox.getLevel().getGameTime() - jukebox.playingStopped) <= 4) {
+            if (jukebox.getLevel() == null) return 0;
+            if (!jukebox.isPlaying() && (jukebox.getLevel().getGameTime() - jukebox.playingStopped) <= RepeatingJukeboxBE.STOP_REDSTONE_LENGTH) {
                 return 15;
             }
         }
