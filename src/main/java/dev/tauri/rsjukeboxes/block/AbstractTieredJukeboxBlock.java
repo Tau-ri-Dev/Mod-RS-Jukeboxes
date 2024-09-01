@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -36,7 +35,7 @@ public abstract class AbstractTieredJukeboxBlock extends AbstractRSJukebox {
             BlockEntity blockentity = pLevel.getBlockEntity(pPos);
             if (blockentity instanceof AbstractTieredJukeboxBE jukebox) {
                 if (pPlayer instanceof ServerPlayer sp) {
-                    NetworkHooks.openScreen(sp, new SimpleMenuProvider((id, pInv, p) -> new TieredJukeboxContainer(id, pInv, jukebox), Component.empty()), jukebox.getBlockPos());
+                    sp.openMenu(new SimpleMenuProvider((id, pInv, p) -> new TieredJukeboxContainer(id, pInv, jukebox), Component.empty()), jukebox.getBlockPos());
                 }
             }
         }

@@ -20,7 +20,7 @@ public class RSJukeboxes {
     public static final String MOD_ID = "rsjukeboxes";
     public static final String MOD_NAME = "Redstone Jukeboxes";
     public static String MOD_VERSION = "";
-    public static final String MC_VERSION = "1.20.1";
+    public static final String MC_VERSION = "1.20.2";
     public static Logger logger;
 
     public RSJukeboxes() {

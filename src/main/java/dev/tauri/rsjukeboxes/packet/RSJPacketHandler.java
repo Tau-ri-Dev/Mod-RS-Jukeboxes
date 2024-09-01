@@ -7,10 +7,10 @@ import dev.tauri.rsjukeboxes.packet.packets.StateUpdateRequestToServer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.network.SimpleChannel;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -21,23 +21,23 @@ public class RSJPacketHandler {
     }
 
     public static void sendToServer(Object packet) {
-        INSTANCE.send(PacketDistributor.SERVER.noArg(), packet);
+        INSTANCE.send(packet, PacketDistributor.SERVER.noArg());
     }
 
     public static void sendToClient(Object packet, PacketDistributor.TargetPoint point) {
-        INSTANCE.send(PacketDistributor.NEAR.with(() -> point), packet);
+        INSTANCE.send(packet, PacketDistributor.NEAR.with(point));
     }
 
     public static void sendTo(Object packet, ServerPlayer player) {
-        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
+        INSTANCE.send(packet, PacketDistributor.PLAYER.with(player));
     }
 
-    public static final String NETWORK_VERSION = "1.0";
+    public static final int NETWORK_VERSION = 1;
 
-    private static final SimpleChannel INSTANCE = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(RSJukeboxes.MOD_ID, "main"))
-            .clientAcceptedVersions((version) -> Objects.equals(version, NETWORK_VERSION))
-            .serverAcceptedVersions((version) -> Objects.equals(version, NETWORK_VERSION))
-            .networkProtocolVersion(() -> NETWORK_VERSION)
+    private static final SimpleChannel INSTANCE = ChannelBuilder.named(new ResourceLocation(RSJukeboxes.MOD_ID, "main"))
+            .clientAcceptedVersions((status, version) -> Objects.equals(version, NETWORK_VERSION))
+            .serverAcceptedVersions((status, version) -> Objects.equals(version, NETWORK_VERSION))
+            .networkProtocolVersion(NETWORK_VERSION)
             .simpleChannel();
 
     public static void init() {
@@ -55,7 +55,7 @@ public class RSJPacketHandler {
             INSTANCE.messageBuilder(clazz, id, direction)
                     .encoder(RSJPacket::toBytes)
                     .decoder(decoder)
-                    .consumerNetworkThread(RSJPacket::handleSupplier)
+                    .consumerNetworkThread(RSJPacket::handle)
                     .add();
         } catch (Exception e) {
             RSJukeboxes.logger.error("Could not register packet " + id + ": ", e);

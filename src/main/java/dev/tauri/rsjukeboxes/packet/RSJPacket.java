@@ -1,9 +1,7 @@
 package dev.tauri.rsjukeboxes.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 public abstract class RSJPacket {
     public RSJPacket() {
@@ -13,12 +11,7 @@ public abstract class RSJPacket {
 
     public abstract void fromBytes(FriendlyByteBuf buf);
 
-    public abstract void handle(NetworkEvent.Context ctx);
-
-    public boolean handleSupplier(Supplier<NetworkEvent.Context> contextSupplier) {
-        handle(contextSupplier.get());
-        return true;
-    }
+    public abstract void handle(CustomPayloadEvent.Context ctx);
 
     public RSJPacket(FriendlyByteBuf buf) {
         fromBytes(buf);
