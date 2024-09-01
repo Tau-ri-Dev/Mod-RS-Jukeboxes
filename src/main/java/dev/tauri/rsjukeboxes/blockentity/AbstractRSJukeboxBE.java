@@ -15,9 +15,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.DiscFragmentItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.LevelEvent;
@@ -100,7 +100,7 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
     protected boolean shouldRecordStopPlaying() {
         if (!isPlaying) return false;
         if (getPlayingItem().isEmpty()) return true;
-        return Objects.requireNonNull(level).getGameTime() >= this.playingStarted + (long) ((RecordItem) getPlayingItem().getItem()).getLengthInTicks() + getDelayBetweenRecords();
+        return Objects.requireNonNull(level).getGameTime() >= this.playingStarted + (long) ((DiscFragmentItem) getPlayingItem().getItem()).getLengthInTicks() + getDelayBetweenRecords();
     }
 
     protected void setHasRecordBlockState(boolean pHasRecord) {
