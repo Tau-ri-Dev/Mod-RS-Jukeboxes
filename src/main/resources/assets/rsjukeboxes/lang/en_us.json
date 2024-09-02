@@ -7,14 +7,14 @@
   "item.rsjukeboxes.block.rsjukeboxes.rs_jukebox_block.tooltip": "Basic jukebox which you can turn on by redstone",
   "block.rsjukeboxes.repeating_jukebox_block": "Repeating Jukebox",
   "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip": "Repeats one song if it's powered by redstone",
-  "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip.extended": "§lWiring:%nl%  North: ON/OFF%nl%  South: Emits when track ends%nl%  East: Tick pause delay addition%nl%  West: Tick pause delay coefficient%nl%%nl%  §o  delay = west*16 + east",
+  "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip.extended": "§lWiring:%nl%  Yellow: ON/OFF%nl%  Red: Emits when track ends%nl%  Green: Tick pause delay addition%nl%  Blue: Tick pause delay coefficient%nl%%nl%  §o  delay = Blue*16 + Green",
   "block.rsjukeboxes.tier1_advanced_jukebox_block": "Tier I Advanced Jukebox",
   "block.rsjukeboxes.tier2_advanced_jukebox_block": "Tier II Advanced Jukebox",
   "block.rsjukeboxes.tier3_advanced_jukebox_block": "Tier III Advanced Jukebox",
   "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip": "Advanced redstone jukebox",
   "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip": "Advanced redstone jukebox",
   "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip": "Advanced redstone jukebox",
-  "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip.extended": "Slots: 5%nl%%nl%§lWiring:%nl%  North: Play/Stop%nl%  South: Emits when track ends%nl%  East: Previous track%nl%  West: Next track",
-  "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip.extended": "Slots: 10%nl%%nl%§lWiring:%nl%  North: Play/Stop%nl%  South: Emits when track ends%nl%  East: Previous track%nl%  West: Next track",
-  "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip.extended": "Slots: 15%nl%%nl%§lWiring:%nl%  North: Play/Stop%nl%  South: Emits when track ends%nl%  East: Previous track%nl%  West: Next track"
+  "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip.extended": "Slots: 5%nl%%nl%§lWiring:%nl%  Yellow: Play/Stop%nl%  Red: Emits when track ends%nl%  Green: Previous track%nl%  Blue: Next track",
+  "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip.extended": "Slots: 10%nl%%nl%§lWiring:%nl%  Yellow: Play/Stop%nl%  Red: Emits when track ends%nl%  Green: Previous track%nl%  Blue: Next track",
+  "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip.extended": "Slots: 15%nl%%nl%§lWiring:%nl%  Yellow: Play/Stop%nl%  Red: Emits when track ends%nl%  Green: Previous track%nl%  Blue: Next track"
 }
