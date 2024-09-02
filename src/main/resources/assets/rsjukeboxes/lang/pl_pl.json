@@ -1,0 +1,24 @@
+{
+  "gui.jukebox.playlist": "Lista odtwarzania",
+  "gui.jukebox.play": "Odtwórz",
+  "gui.jukebox.stop": "Zatrzymaj",
+  "gui.jukebox.next": "Następny utwór",
+  "gui.jukebox.prev": "Poprzedni utwór",
+  "itemGroup.rsjukeboxes_jukeboxes": "Jukeboxy Redstone",
+  "tooltip.general.hold_shift": "Przytrzymaj %key%, aby zobaczyć zaawansowane informacje!",
+
+  "block.rsjukeboxes.rs_jukebox_block": "Jukebox Redstone",
+  "item.rsjukeboxes.block.rsjukeboxes.rs_jukebox_block.tooltip": "Podstawowy jukebox, który można włączyć za pomocą redstone'a",
+  "block.rsjukeboxes.repeating_jukebox_block": "Powtarzający się Jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip": "Powtarza jedną piosenkę, jeśli jest zasilany redstone'em",
+  "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip.extended": "§lOkablowanie:%nl%  Żółty: WŁ./WYŁ.%nl%  Czerwony: Wysyła sygnał, gdy utwór się kończy%nl%  Zielony: Dodatkowe opóźnienie pauzy w tickach%nl%  Niebieski: Współczynnik opóźnienia pauzy w tickach%nl%%nl%  §o  opóźnienie = Niebieski*16 + Zielony",
+  "block.rsjukeboxes.tier1_advanced_jukebox_block": "Zaawansowany Jukebox Poziom I",
+  "block.rsjukeboxes.tier2_advanced_jukebox_block": "Zaawansowany Jukebox Poziom II",
+  "block.rsjukeboxes.tier3_advanced_jukebox_block": "Zaawansowany Jukebox Poziom III",
+  "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip": "Zaawansowany jukebox redstone",
+  "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip": "Zaawansowany jukebox redstone",
+  "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip": "Zaawansowany jukebox redstone",
+  "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip.extended": "Sloty: 5%nl%%nl%§lOkablowanie:%nl%  Żółty: Odtwórz/Zatrzymaj%nl%  Czerwony: Wysyła sygnał, gdy utwór się kończy%nl%  Zielony: Poprzedni utwór%nl%  Niebieski: Następny utwór",
+  "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip.extended": "Sloty: 10%nl%%nl%§lOkablowanie:%nl%  Żółty: Odtwórz/Zatrzymaj%nl%  Czerwony: Wysyła sygnał, gdy utwór się kończy%nl%  Zielony: Poprzedni utwór%nl%  Niebieski: Następny utwór",
+  "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip.extended": "Sloty: 15%nl%%nl%§lOkablowanie:%nl%  Żółty: Odtwórz/Zatrzymaj%nl%  Czerwony: Wysyła sygnał, gdy utwór się kończy%nl%  Zielony: Poprzedni utwór%nl%  Niebieski: Następny utwór"
+}
