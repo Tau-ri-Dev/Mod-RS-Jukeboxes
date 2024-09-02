@@ -1,0 +1,24 @@
+{
+  "gui.jukebox.playlist": "Wiedergabeliste",
+  "gui.jukebox.play": "Abspielen",
+  "gui.jukebox.stop": "Stopp",
+  "gui.jukebox.next": "Nächster Titel",
+  "gui.jukebox.prev": "Vorheriger Titel",
+  "itemGroup.rsjukeboxes_jukeboxes": "Redstone Jukeboxen",
+  "tooltip.general.hold_shift": "Halte %key%, um erweiterte Informationen anzuzeigen!",
+
+  "block.rsjukeboxes.rs_jukebox_block": "Redstone Jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.rs_jukebox_block.tooltip": "Grundlegende Jukebox, die mit Redstone eingeschaltet werden kann",
+  "block.rsjukeboxes.repeating_jukebox_block": "Wiederholende Jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip": "Wiederholt einen Song, wenn sie mit Redstone betrieben wird",
+  "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip.extended": "§lVerdrahtung:%nl%  Gelb: EIN/AUS%nl%  Rot: Sendet Signal, wenn Titel endet%nl%  Grün: Tick-Pausenverzögerung Addition%nl%  Blau: Tick-Pausenverzögerungskoeffizient%nl%%nl%  §o  Verzögerung = Blau*16 + Grün",
+  "block.rsjukeboxes.tier1_advanced_jukebox_block": "Fortgeschrittene Jukebox Stufe I",
+  "block.rsjukeboxes.tier2_advanced_jukebox_block": "Fortgeschrittene Jukebox Stufe II",
+  "block.rsjukeboxes.tier3_advanced_jukebox_block": "Fortgeschrittene Jukebox Stufe III",
+  "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip": "Fortgeschrittene Redstone Jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip": "Fortgeschrittene Redstone Jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip": "Fortgeschrittene Redstone Jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip.extended": "Steckplätze: 5%nl%%nl%§lVerdrahtung:%nl%  Gelb: Abspielen/Stoppen%nl%  Rot: Sendet Signal, wenn Titel endet%nl%  Grün: Vorheriger Titel%nl%  Blau: Nächster Titel",
+  "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip.extended": "Steckplätze: 10%nl%%nl%§lVerdrahtung:%nl%  Gelb: Abspielen/Stoppen%nl%  Rot: Sendet Signal, wenn Titel endet%nl%  Grün: Vorheriger Titel%nl%  Blau: Nächster Titel",
+  "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip.extended": "Steckplätze: 15%nl%%nl%§lVerdrahtung:%nl%  Gelb: Abspielen/Stoppen%nl%  Rot: Sendet Signal, wenn Titel endet%nl%  Grün: Vorheriger Titel%nl%  Blau: Nächster Titel"
+}

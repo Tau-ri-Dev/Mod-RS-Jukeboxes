@@ -42,10 +42,10 @@ public class TieredJukeboxGui extends AbstractContainerScreen<TieredJukeboxConta
         buttons.clear();
 
         var y = (65f - 18f + ((int) Math.ceil(menu.jukebox.getContainerSize() / 5f) * 18)) / 2f;
-        buttons.add(new IconButton(0, getGuiLeft() + 121, (int) (getGuiTop() + y - 24), BUTTONS_TEXTURE, 256, 0, 0, 22, 22, true, "Play"));
-        buttons.add(new IconButton(1, getGuiLeft() + 147, (int) (getGuiTop() + y - 24), BUTTONS_TEXTURE, 256, 0, 44, 22, 22, true, "Stop"));
-        buttons.add(new IconButton(2, getGuiLeft() + 121, (int) (getGuiTop() + y + 2), BUTTONS_TEXTURE, 256, 0, 22, 22, 22, true, "Previous"));
-        buttons.add(new IconButton(3, getGuiLeft() + 147, (int) (getGuiTop() + y + 2), BUTTONS_TEXTURE, 256, 0, 66, 22, 22, true, "Next"));
+        buttons.add(new IconButton(0, getGuiLeft() + 121, (int) (getGuiTop() + y - 24), BUTTONS_TEXTURE, 256, 0, 0, 22, 22, true, I18n.format("gui.jukebox.play")));
+        buttons.add(new IconButton(1, getGuiLeft() + 147, (int) (getGuiTop() + y - 24), BUTTONS_TEXTURE, 256, 0, 44, 22, 22, true, I18n.format("gui.jukebox.stop")));
+        buttons.add(new IconButton(2, getGuiLeft() + 121, (int) (getGuiTop() + y + 2), BUTTONS_TEXTURE, 256, 0, 22, 22, 22, true, I18n.format("gui.jukebox.prev")));
+        buttons.add(new IconButton(3, getGuiLeft() + 147, (int) (getGuiTop() + y + 2), BUTTONS_TEXTURE, 256, 0, 66, 22, 22, true, I18n.format("gui.jukebox.next")));
     }
 
     @Override

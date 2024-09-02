@@ -1,0 +1,24 @@
+{
+  "gui.jukebox.playlist": "Zoznam skladieb",
+  "gui.jukebox.play": "Prehrať",
+  "gui.jukebox.stop": "Zastaviť",
+  "gui.jukebox.next": "Nasledujúca skladba",
+  "gui.jukebox.prev": "Predchádzajúca skladba",
+  "itemGroup.rsjukeboxes_jukeboxes": "Redstone Jukeboxy",
+  "tooltip.general.hold_shift": "Podržte %key%, aby ste zobrazili rozšírené informácie!",
+
+  "block.rsjukeboxes.rs_jukebox_block": "Redstone Jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.rs_jukebox_block.tooltip": "Základný jukebox, ktorý môžete zapnúť redstoneom",
+  "block.rsjukeboxes.repeating_jukebox_block": "Opakujúci sa Jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip": "Opakuje jednu skladbu, ak je napájaný redstoneom",
+  "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip.extended": "§lZapojenie:%nl%  Žltá: ZAP/VYP%nl%  Červená: Vysiela signál po skončení skladby%nl%  Zelená: Pridanie oneskorenia pauzy v tickoch%nl%  Modrá: Koeficient oneskorenia pauzy v tickoch%nl%%nl%  §o  oneskorenie = Modrá*16 + Zelená",
+  "block.rsjukeboxes.tier1_advanced_jukebox_block": "Pokročilý Jukebox Úroveň I",
+  "block.rsjukeboxes.tier2_advanced_jukebox_block": "Pokročilý Jukebox Úroveň II",
+  "block.rsjukeboxes.tier3_advanced_jukebox_block": "Pokročilý Jukebox Úroveň III",
+  "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip": "Pokročilý redstone jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip": "Pokročilý redstone jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip": "Pokročilý redstone jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip.extended": "Sloty: 5%nl%%nl%§lZapojenie:%nl%  Žltá: Prehrať/Zastaviť%nl%  Červená: Vysiela signál po skončení skladby%nl%  Zelená: Predchádzajúca skladba%nl%  Modrá: Nasledujúca skladba",
+  "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip.extended": "Sloty: 10%nl%%nl%§lZapojenie:%nl%  Žltá: Prehrať/Zastaviť%nl%  Červená: Vysiela signál po skončení skladby%nl%  Zelená: Predchádzajúca skladba%nl%  Modrá: Nasledujúca skladba",
+  "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip.extended": "Sloty: 15%nl%%nl%§lZapojenie:%nl%  Žltá: Prehrať/Zastaviť%nl%  Červená: Vysiela signál po skončení skladby%nl%  Zelená: Predchádzajúca skladba%nl%  Modrá: Nasledujúca skladba"
+}
