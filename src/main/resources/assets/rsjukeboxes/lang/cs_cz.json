@@ -1,0 +1,24 @@
+{
+  "gui.jukebox.playlist": "Seznam skladeb",
+  "gui.jukebox.play": "Přehrát",
+  "gui.jukebox.stop": "Zastavit",
+  "gui.jukebox.next": "Další skladba",
+  "gui.jukebox.prev": "Předchozí skladba",
+  "itemGroup.rsjukeboxes_jukeboxes": "Redstone Jukeboxy",
+  "tooltip.general.hold_shift": "Podržte %key% pro zobrazení rozšířených informací!",
+
+  "block.rsjukeboxes.rs_jukebox_block": "Redstone Jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.rs_jukebox_block.tooltip": "Základní jukebox, který lze zapnout redstonem",
+  "block.rsjukeboxes.repeating_jukebox_block": "Opakující se Jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip": "Opakuje jednu skladbu, pokud je napájen redstonem",
+  "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip.extended": "§lZapojení:%nl%  Žlutá: ZAP/VYP%nl%  Červená: Vysílá signál, když skladba skončí%nl%  Zelená: Přidání prodlevy mezi pauzami v tiku%nl%  Modrá: Koeficient prodlevy mezi pauzami v tiku%nl%%nl%  §o  prodleva = Modrá*16 + Zelená",
+  "block.rsjukeboxes.tier1_advanced_jukebox_block": "Pokročilý Jukebox úrovně I",
+  "block.rsjukeboxes.tier2_advanced_jukebox_block": "Pokročilý Jukebox úrovně II",
+  "block.rsjukeboxes.tier3_advanced_jukebox_block": "Pokročilý Jukebox úrovně III",
+  "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip": "Pokročilý redstone jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip": "Pokročilý redstone jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip": "Pokročilý redstone jukebox",
+  "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip.extended": "Sloty: 5%nl%%nl%§lZapojení:%nl%  Žlutá: Přehrát/Zastavit%nl%  Červená: Vysílá signál, když skladba skončí%nl%  Zelená: Předchozí skladba%nl%  Modrá: Další skladba",
+  "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip.extended": "Sloty: 10%nl%%nl%§lZapojení:%nl%  Žlutá: Přehrát/Zastavit%nl%  Červená: Vysílá signál, když skladba skončí%nl%  Zelená: Předchozí skladba%nl%  Modrá: Další skladba",
+  "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip.extended": "Sloty: 15%nl%%nl%§lZapojení:%nl%  Žlutá: Přehrát/Zastavit%nl%  Červená: Vysílá signál, když skladba skončí%nl%  Zelená: Předchozí skladba%nl%  Modrá: Další skladba"
+}

@@ -1,0 +1,24 @@
+{
+  "gui.jukebox.playlist": "Плейлист",
+  "gui.jukebox.play": "Играть",
+  "gui.jukebox.stop": "Стоп",
+  "gui.jukebox.next": "Следующий трек",
+  "gui.jukebox.prev": "Предыдущий трек",
+  "itemGroup.rsjukeboxes_jukeboxes": "Редстоун Проигрыватели",
+  "tooltip.general.hold_shift": "Удерживайте %key%, чтобы показать расширенную подсказку!",
+
+  "block.rsjukeboxes.rs_jukebox_block": "Редстоун Проигрыватель",
+  "item.rsjukeboxes.block.rsjukeboxes.rs_jukebox_block.tooltip": "Базовый проигрыватель, который можно включить с помощью редстоуна",
+  "block.rsjukeboxes.repeating_jukebox_block": "Повторяющийся Проигрыватель",
+  "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip": "Повторяет одну песню, если она подключена к редстоуну",
+  "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip.extended": "§lПроводка:%nl%  Желтый: Вкл./Выкл.%nl%  Красный: Сигнал, когда трек заканчивается%nl%  Зеленый: Добавление задержки паузы в тиках%nl%  Синий: Коэффициент задержки паузы в тиках%nl%%nl%  §o  задержка = Синий*16 + Зеленый",
+  "block.rsjukeboxes.tier1_advanced_jukebox_block": "Продвинутый Проигрыватель Уровень I",
+  "block.rsjukeboxes.tier2_advanced_jukebox_block": "Продвинутый Проигрыватель Уровень II",
+  "block.rsjukeboxes.tier3_advanced_jukebox_block": "Продвинутый Проигрыватель Уровень III",
+  "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip": "Продвинутый редстоун проигрыватель",
+  "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip": "Продвинутый редстоун проигрыватель",
+  "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip": "Продвинутый редстоун проигрыватель",
+  "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip.extended": "Слоты: 5%nl%%nl%§lПроводка:%nl%  Желтый: Играть/Стоп%nl%  Красный: Сигнал, когда трек заканчивается%nl%  Зеленый: Предыдущий трек%nl%  Синий: Следующий трек",
+  "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip.extended": "Слоты: 10%nl%%nl%§lПроводка:%nl%  Желтый: Играть/Стоп%nl%  Красный: Сигнал, когда трек заканчивается%nl%  Зеленый: Предыдущий трек%nl%  Синий: Следующий трек",
+  "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip.extended": "Слоты: 15%nl%%nl%§lПроводка:%nl%  Желтый: Играть/Стоп%nl%  Красный: Сигнал, когда трек заканчивается%nl%  Зеленый: Предыдущий трек%nl%  Синий: Следующий трек"
+}

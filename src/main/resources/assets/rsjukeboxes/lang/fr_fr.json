@@ -1,0 +1,24 @@
+{
+  "gui.jukebox.playlist": "Liste de lecture",
+  "gui.jukebox.play": "Jouer",
+  "gui.jukebox.stop": "Arrêter",
+  "gui.jukebox.next": "Piste suivante",
+  "gui.jukebox.prev": "Piste précédente",
+  "itemGroup.rsjukeboxes_jukeboxes": "Jukebox Redstone",
+  "tooltip.general.hold_shift": "Maintenez %key% pour afficher des informations avancées !",
+
+  "block.rsjukeboxes.rs_jukebox_block": "Jukebox Redstone",
+  "item.rsjukeboxes.block.rsjukeboxes.rs_jukebox_block.tooltip": "Jukebox basique que vous pouvez allumer avec de la redstone",
+  "block.rsjukeboxes.repeating_jukebox_block": "Jukebox Répétitif",
+  "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip": "Répète une chanson si elle est alimentée par la redstone",
+  "item.rsjukeboxes.block.rsjukeboxes.repeating_jukebox_block.tooltip.extended": "§lCâblage :%nl%  Jaune : ON/OFF%nl%  Rouge : Émet quand la piste se termine%nl%  Vert : Ajout du délai de pause en ticks%nl%  Bleu : Coefficient du délai de pause en ticks%nl%%nl%  §o  délai = Bleu*16 + Vert",
+  "block.rsjukeboxes.tier1_advanced_jukebox_block": "Jukebox Avancé Niveau I",
+  "block.rsjukeboxes.tier2_advanced_jukebox_block": "Jukebox Avancé Niveau II",
+  "block.rsjukeboxes.tier3_advanced_jukebox_block": "Jukebox Avancé Niveau III",
+  "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip": "Jukebox redstone avancé",
+  "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip": "Jukebox redstone avancé",
+  "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip": "Jukebox redstone avancé",
+  "item.rsjukeboxes.block.rsjukeboxes.tier1_advanced_jukebox_block.tooltip.extended": "Emplacements : 5%nl%%nl%§lCâblage :%nl%  Jaune : Jouer/Arrêter%nl%  Rouge : Émet quand la piste se termine%nl%  Vert : Piste précédente%nl%  Bleu : Piste suivante",
+  "item.rsjukeboxes.block.rsjukeboxes.tier2_advanced_jukebox_block.tooltip.extended": "Emplacements : 10%nl%%nl%§lCâblage :%nl%  Jaune : Jouer/Arrêter%nl%  Rouge : Émet quand la piste se termine%nl%  Vert : Piste précédente%nl%  Bleu : Piste suivante",
+  "item.rsjukeboxes.block.rsjukeboxes.tier3_advanced_jukebox_block.tooltip.extended": "Emplacements : 15%nl%%nl%§lCâblage :%nl%  Jaune : Jouer/Arrêter%nl%  Rouge : Émet quand la piste se termine%nl%  Vert : Piste précédente%nl%  Bleu : Piste suivante"
+}

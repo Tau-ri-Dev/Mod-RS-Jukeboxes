@@ -1,5 +1,9 @@
 {
   "gui.jukebox.playlist": "Playlist",
+  "gui.jukebox.play": "Play",
+  "gui.jukebox.stop": "Stop",
+  "gui.jukebox.next": "Next track",
+  "gui.jukebox.prev": "Previous track",
   "itemGroup.rsjukeboxes_jukeboxes": "Redstone Jukeboxes",
   "tooltip.general.hold_shift": "Hold %key% to show advanced tooltip!",
 
