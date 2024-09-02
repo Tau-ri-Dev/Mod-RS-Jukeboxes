@@ -1,10 +1,13 @@
 {
   "variants": {
-    "has_record=false": {
-      "model": "rsjukeboxes:block/tier2_advanced_jukebox_block"
-    },
-    "has_record=true": {
-      "model": "rsjukeboxes:block/tier2_advanced_jukebox_block"
-    }
+    "facing=south,has_record=false": { "y": 180, "x": 0, "model": "rsjukeboxes:block/tier2_advanced_jukebox_block" },
+    "facing=west,has_record=false": { "y": 270, "x": 0, "model": "rsjukeboxes:block/tier2_advanced_jukebox_block" },
+    "facing=north,has_record=false": { "y": 0, "x": 0, "model": "rsjukeboxes:block/tier2_advanced_jukebox_block" },
+    "facing=east,has_record=false": { "y": 90, "x": 0, "model": "rsjukeboxes:block/tier2_advanced_jukebox_block" },
+
+    "facing=south,has_record=true": { "y": 180, "x": 0, "model": "rsjukeboxes:block/tier2_advanced_jukebox_block" },
+    "facing=west,has_record=true": { "y": 270, "x": 0, "model": "rsjukeboxes:block/tier2_advanced_jukebox_block" },
+    "facing=north,has_record=true": { "y": 0, "x": 0, "model": "rsjukeboxes:block/tier2_advanced_jukebox_block" },
+    "facing=east,has_record=true": { "y": 90, "x": 0, "model": "rsjukeboxes:block/tier2_advanced_jukebox_block" }
   }
 }
