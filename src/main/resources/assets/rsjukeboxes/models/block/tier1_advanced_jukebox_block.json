@@ -1,9 +1,10 @@
 {
+	"render_type": "cutout",
 	"credit": "Created by Fredyman_95 aka IllegalArgumentException",
 	"texture_size": [64, 64],
 	"textures": {
-		"0": "block/texture",
-		"particle": "block/texture"
+		"0": "rsjukeboxes:block/tier1_advanced_jukebox",
+		"particle": "rsjukeboxes:block/tier1_advanced_jukebox"
 	},
 	"elements": [
 		{
