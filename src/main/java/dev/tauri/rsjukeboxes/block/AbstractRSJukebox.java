@@ -120,11 +120,14 @@ public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedI
 
     @Override
     @ParametersAreNonnullByDefault
-    public int getSignal(BlockState pState, BlockGetter pLevel, BlockPos pPos, Direction pDirection) {
+    public int getSignal(BlockState pState, BlockGetter pLevel, BlockPos pPos, Direction direction) {
         if (pLevel instanceof ClientLevel) return 0;
         var jukeboxBE = getJukeboxBE(pLevel, pPos);
         if (jukeboxBE == null) return 0;
-        return getOutputSignal(pState, pLevel, pPos, pDirection, jukeboxBE);
+        var blockDirection = pState.getValue(HORIZONTAL_FACING);
+        var directionRotated = Direction.fromYRot(blockDirection.toYRot() + direction.toYRot());
+        if (blockDirection.getAxis() == Direction.Axis.Z) directionRotated = directionRotated.getOpposite();
+        return getOutputSignal(pState, pLevel, pPos, direction.getAxis() == Direction.Axis.Y ? direction : directionRotated, jukeboxBE);
     }
 
     @Override
