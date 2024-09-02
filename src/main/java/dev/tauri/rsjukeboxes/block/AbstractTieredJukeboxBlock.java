@@ -1,5 +1,6 @@
 package dev.tauri.rsjukeboxes.block;
 
+import dev.tauri.rsjukeboxes.blockentity.AbstractRSJukeboxBE;
 import dev.tauri.rsjukeboxes.blockentity.AbstractTieredJukeboxBE;
 import dev.tauri.rsjukeboxes.blockentity.RepeatingJukeboxBE;
 import dev.tauri.rsjukeboxes.screen.container.TieredJukeboxContainer;
@@ -13,7 +14,6 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,13 +22,12 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Map;
 
-@SuppressWarnings("deprecation")
 public abstract class AbstractTieredJukeboxBlock extends AbstractRSJukebox {
     public AbstractTieredJukeboxBlock() {
         super(Properties.copy(Blocks.JUKEBOX));
     }
-
 
     @ParametersAreNonnullByDefault
     public @NotNull InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
@@ -46,27 +45,23 @@ public abstract class AbstractTieredJukeboxBlock extends AbstractRSJukebox {
 
     @Override
     @ParametersAreNonnullByDefault
-    public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pBlock, BlockPos pFromPos, boolean pIsMoving) {
-        super.neighborChanged(pState, pLevel, pPos, pBlock, pFromPos, pIsMoving);
-        if (pLevel.isClientSide) return;
-        if (pIsMoving) return;
-        var be = pLevel.getBlockEntity(pPos);
-        if (!(be instanceof AbstractTieredJukeboxBE jukeboxBE)) return;
-        for (var direction : Direction.values()) {
-            if (!pPos.offset(direction.getNormal()).equals(pFromPos)) continue;
-            var signal = pLevel.getSignal(pFromPos, direction);
+    public void processInputSignal(BlockState state, BlockGetter level, BlockPos pos, BlockPos changedPos, Map<Direction, Integer> signals, AbstractRSJukeboxBE jukeboxBE) {
+        if (!(jukeboxBE instanceof AbstractTieredJukeboxBE tieredJukeboxBE)) return;
+        for (var e : signals.entrySet()) {
+            var direction = e.getKey();
+            var signal = e.getValue();
             switch (direction) {
                 case NORTH:
-                    jukeboxBE.setPowered(signal > 0);
+                    tieredJukeboxBE.setPowered(signal > 0);
                     break;
                 case EAST:
                     if (signal > 0) {
-                        jukeboxBE.selectPreviousTrack();
+                        tieredJukeboxBE.selectPreviousTrack();
                     }
                     break;
                 case WEST:
                     if (signal > 0) {
-                        jukeboxBE.selectNextTrack();
+                        tieredJukeboxBE.selectNextTrack();
                     }
                     break;
                 default:
@@ -78,14 +73,11 @@ public abstract class AbstractTieredJukeboxBlock extends AbstractRSJukebox {
 
     @Override
     @ParametersAreNonnullByDefault
-    public int getSignal(BlockState pState, BlockGetter pLevel, BlockPos pPos, Direction pDirection) {
-        if (pDirection.getOpposite() != Direction.SOUTH) return 0;
-        BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-        if (blockentity instanceof AbstractTieredJukeboxBE jukebox) {
-            if (jukebox.getLevel() == null) return 0;
-            if (!jukebox.isPlaying() && (jukebox.getLevel().getGameTime() - jukebox.playingStopped) <= RepeatingJukeboxBE.STOP_REDSTONE_LENGTH) {
-                return 15;
-            }
+    public int getOutputSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction, AbstractRSJukeboxBE jukeboxBE) {
+        if (direction.getOpposite() != Direction.SOUTH) return 0;
+        if (jukeboxBE.getLevel() == null) return 0;
+        if (!jukeboxBE.isPlaying() && (jukeboxBE.getLevel().getGameTime() - jukeboxBE.playingStopped) <= RepeatingJukeboxBE.STOP_REDSTONE_LENGTH) {
+            return 15;
         }
         return 0;
     }
