@@ -1,5 +1,6 @@
 package dev.tauri.rsjukeboxes.block;
 
+import dev.tauri.rsjukeboxes.blockentity.AbstractRSJukeboxBE;
 import dev.tauri.rsjukeboxes.blockentity.AbstractTieredJukeboxBE;
 import dev.tauri.rsjukeboxes.blockentity.RepeatingJukeboxBE;
 import dev.tauri.rsjukeboxes.screen.container.TieredJukeboxContainer;
@@ -14,12 +15,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Map;
 
 public abstract class AbstractTieredJukeboxBlock extends AbstractRSJukebox {
     @ParametersAreNonnullByDefault
@@ -38,15 +41,11 @@ public abstract class AbstractTieredJukeboxBlock extends AbstractRSJukebox {
 
     @Override
     @ParametersAreNonnullByDefault
-    public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pBlock, BlockPos pFromPos, boolean pIsMoving) {
-        super.neighborChanged(pState, pLevel, pPos, pBlock, pFromPos, pIsMoving);
-        if (pLevel.isClientSide) return;
-        if (pIsMoving) return;
-        var be = pLevel.getBlockEntity(pPos);
-        if (!(be instanceof AbstractTieredJukeboxBE jukeboxBE)) return;
-        for (var direction : Direction.values()) {
-            if (!pPos.offset(direction.getNormal()).equals(pFromPos)) continue;
-            var signal = pLevel.getSignal(pFromPos, direction);
+    public void processInputSignal(BlockState state, BlockGetter level, BlockPos pos, BlockPos changedPos, Map<Direction, Integer> signals, AbstractRSJukeboxBE jukeboxBE) {
+        if (!(jukeboxBE instanceof AbstractTieredJukeboxBE tieredJukeboxBE)) return;
+        for (var e : signals.entrySet()) {
+            var direction = e.getKey();
+            var signal = e.getValue();
             switch (direction) {
                 case NORTH:
                     jukeboxBE.setPowered(signal > 0);
@@ -70,14 +69,11 @@ public abstract class AbstractTieredJukeboxBlock extends AbstractRSJukebox {
 
     @Override
     @ParametersAreNonnullByDefault
-    public int getSignal(BlockState pState, BlockGetter pLevel, BlockPos pPos, Direction pDirection) {
-        if (pDirection.getOpposite() != Direction.SOUTH) return 0;
-        BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-        if (blockentity instanceof AbstractTieredJukeboxBE jukebox) {
-            if (jukebox.getLevel() == null) return 0;
-            if (!jukebox.isPlaying() && (jukebox.getLevel().getGameTime() - jukebox.playingStopped) <= RepeatingJukeboxBE.STOP_REDSTONE_LENGTH) {
-                return 15;
-            }
+    public int getOutputSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction, AbstractRSJukeboxBE jukeboxBE) {
+        if (direction.getOpposite() != Direction.SOUTH) return 0;
+        if (jukeboxBE.getLevel() == null) return 0;
+        if (!jukeboxBE.isPlaying() && (jukeboxBE.getLevel().getGameTime() - jukeboxBE.playingStopped) <= RepeatingJukeboxBE.STOP_REDSTONE_LENGTH) {
+            return 15;
         }
         return 0;
     }
