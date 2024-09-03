@@ -34,7 +34,7 @@ public abstract class AbstractTieredJukeboxBlock extends AbstractRSJukebox {
             BlockEntity blockentity = pLevel.getBlockEntity(pPos);
             if (blockentity instanceof AbstractTieredJukeboxBE jukebox) {
                 if (pPlayer instanceof ServerPlayer sp) {
-                    sp.openMenu(new SimpleMenuProvider((id, pInv, p) -> new TieredJukeboxContainer(id, pInv, jukebox), Component.empty()), jukebox.getBlockPos());
+                    sp.openMenu(new SimpleMenuProvider((id, pInv, p) -> new TieredJukeboxContainer(id, pInv, jukebox), Component.empty()));
                 }
             }
         }
