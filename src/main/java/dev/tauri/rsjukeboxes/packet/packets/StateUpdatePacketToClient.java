@@ -6,16 +6,21 @@ import dev.tauri.rsjukeboxes.state.State;
 import dev.tauri.rsjukeboxes.state.StateProviderInterface;
 import dev.tauri.rsjukeboxes.state.StateTypeEnum;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.NetworkDirection;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.NotImplementedException;
 
 public class StateUpdatePacketToClient extends PositionedPacket {
+
+    public StateUpdatePacketToClient() {
+        super();
+    }
+
     private StateTypeEnum stateType;
     private State state;
 
@@ -32,32 +37,35 @@ public class StateUpdatePacketToClient extends PositionedPacket {
         this.state = state;
     }
 
-    public StateUpdatePacketToClient(FriendlyByteBuf buf) {
+    public StateUpdatePacketToClient(PacketByteBuf buf) {
         super(buf);
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public Identifier getId() {
+        return new Identifier(RSJukeboxes.MOD_ID, "state_update_packet_to_client");
+    }
+
+    @Override
+    public void toBytes(PacketByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(stateType.id);
         state.toBytes(buf);
     }
 
     @Override
-    public void fromBytes(FriendlyByteBuf buf) {
+    public void fromBytes(PacketByteBuf buf) {
         super.fromBytes(buf);
         stateType = StateTypeEnum.byId(buf.readInt());
         stateBuf = buf.copy();
     }
 
     @Override
-    public void handle(CustomPayloadEvent.Context ctx) {
-        if (ctx.getDirection() != NetworkDirection.PLAY_TO_CLIENT) return;
-        ctx.setPacketHandled(true);
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) return;
-        ClientLevel level = player.clientLevel;
-        ctx.enqueueWork(() -> {
+    public void handle(PlayerEntity player, PacketSender responseSender) {
+        if (!(player instanceof ClientPlayerEntity client)) return;
+        var level = client.getWorld();
+        if (level == null) return;
+        MinecraftClient.getInstance().execute(() -> {
             StateProviderInterface te = (StateProviderInterface) level.getBlockEntity(pos);
             try {
                 if (te == null)

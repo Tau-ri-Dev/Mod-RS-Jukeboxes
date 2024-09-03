@@ -1,12 +1,13 @@
 package dev.tauri.rsjukeboxes.item;
 
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.item.ItemGroup;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 public interface ITabbedItem {
     @Nullable
-    default RegistryObject<CreativeModeTab> getTab() {
+    default Supplier<ItemGroup> getTab() {
         return null;
     }
 }

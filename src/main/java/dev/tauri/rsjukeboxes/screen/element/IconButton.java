@@ -1,10 +1,10 @@
 package dev.tauri.rsjukeboxes.screen.element;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +14,9 @@ import static dev.tauri.rsjukeboxes.screen.util.GuiHelper.drawModalRectWithCusto
 import static dev.tauri.rsjukeboxes.screen.util.GuiHelper.isPointInRegion;
 
 public class IconButton extends ClassicButton {
-    public GuiGraphics graphics;
+    public DrawContext graphics;
     public String[] label;
-    public ResourceLocation texture;
+    public Identifier texture;
     public final int u;
     public final int v;
     public final int width;
@@ -24,7 +24,7 @@ public class IconButton extends ClassicButton {
     public boolean enableHover;
     public final int texSize;
 
-    public IconButton(int buttonId, int x, int y, ResourceLocation texture, int texSize, int u, int v, int width, int height, boolean enableHover, String... label) {
+    public IconButton(int buttonId, int x, int y, Identifier texture, int texSize, int u, int v, int width, int height, boolean enableHover, String... label) {
         super(buttonId, x, y, width, height, "");
         this.label = label;
         this.texture = texture;
@@ -36,12 +36,12 @@ public class IconButton extends ClassicButton {
         this.enableHover = enableHover;
     }
 
-    public void drawButton(GuiGraphics graphics, int mouseX, int mouseY) {
+    public void drawButton(DrawContext graphics, int mouseX, int mouseY) {
         this.graphics = graphics;
         if (this.visible) {
-            this.isHovered = isPointInRegion(getX(), getY(), width, height, mouseX, mouseY);
+            this.hovered = isPointInRegion(getX(), getY(), width, height, mouseX, mouseY);
             RenderSystem.setShaderTexture(0, texture);
-            if (enableHover && isHovered && isActive()) {
+            if (enableHover && hovered && active) {
                 drawModalRectWithCustomSizedTexture(getX(), getY(), u + width, v, width, height, texSize, texSize);
             } else {
                 drawModalRectWithCustomSizedTexture(getX(), getY(), u, v, width, height, texSize, texSize);
@@ -50,10 +50,10 @@ public class IconButton extends ClassicButton {
     }
 
     public void drawFg(int mouseX, int mouseY) {
-        if (isHovered) {
-            List<Component> c = new ArrayList<>();
-            List.of(label).forEach((e) -> c.add(Component.literal(e)));
-            graphics.renderTooltip(Minecraft.getInstance().font, c, Optional.empty(), mouseX, mouseY);
+        if (hovered) {
+            List<Text> c = new ArrayList<>();
+            List.of(label).forEach((e) -> c.add(Text.literal(e)));
+            graphics.drawTooltip(MinecraftClient.getInstance().textRenderer, c, Optional.empty(), mouseX, mouseY);
         }
     }
 }

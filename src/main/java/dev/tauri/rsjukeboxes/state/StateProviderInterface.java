@@ -1,8 +1,7 @@
 package dev.tauri.rsjukeboxes.state;
 
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+
+import net.minecraft.block.entity.BlockEntity;
 
 /**
  * Implemented by {@link BlockEntity} which provides at least one {@link State}
@@ -35,6 +34,5 @@ public interface StateProviderInterface {
 	 * @param stateType {@link StateTypeEnum} State to be applied
 	 * @param state {@link State} instance obtained from packet
 	 */
-	@OnlyIn(Dist.CLIENT)
 	void setState(StateTypeEnum stateType, State state);
 }

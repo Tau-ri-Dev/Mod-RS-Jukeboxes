@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "rsjukeboxes",
+  "version": "${version}",
+  "name": "Redstone Jukeboxes",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/Tau-ri-Dev/Mod-RS-Jukeboxes"
+  },
+  "license": "MIT",
+  "icon": "assets/rsjukeboxes/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "dev.tauri.rsjukeboxes.RSJukeboxesClient"
+    ],
+    "main": [
+      "dev.tauri.rsjukeboxes.RSJukeboxes"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

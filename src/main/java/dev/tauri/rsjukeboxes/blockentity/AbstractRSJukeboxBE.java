@@ -2,6 +2,7 @@ package dev.tauri.rsjukeboxes.blockentity;
 
 import dev.tauri.rsjukeboxes.RSJukeboxes;
 import dev.tauri.rsjukeboxes.packet.RSJPacketHandler;
+import dev.tauri.rsjukeboxes.packet.RSJPacketHandlerClient;
 import dev.tauri.rsjukeboxes.packet.packets.StateUpdatePacketToClient;
 import dev.tauri.rsjukeboxes.packet.packets.StateUpdateRequestToServer;
 import dev.tauri.rsjukeboxes.renderer.GenericRSJukeboxRendererState;
@@ -9,31 +10,30 @@ import dev.tauri.rsjukeboxes.state.State;
 import dev.tauri.rsjukeboxes.state.StateProviderInterface;
 import dev.tauri.rsjukeboxes.state.StateTypeEnum;
 import dev.tauri.rsjukeboxes.util.ITickable;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.RecordItem;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.JukeboxBlock;
-import net.minecraft.world.level.block.LevelEvent;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.network.PacketDistributor;
+import dev.tauri.rsjukeboxes.util.TargetPoint;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.JukeboxBlock;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.MusicDiscItem;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldEvents;
+import net.minecraft.world.event.GameEvent;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 
-public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapabilityProvider, StateProviderInterface {
+public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, StateProviderInterface {
     public AbstractRSJukeboxBE(BlockEntityType<?> type, BlockPos pPos, BlockState pBlockState) {
         super(type, pPos, pBlockState);
     }
@@ -57,7 +57,7 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
 
     protected int currentSlotPlaying = 0;
 
-    public int getCurrentSlotPlaying(){
+    public int getCurrentSlotPlaying() {
         return Math.max(0, Math.min(getContainerSize() - 1, currentSlotPlaying));
     }
 
@@ -73,40 +73,44 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
         }
     }
 
+    public void setChanged() {
+        markDirty();
+    }
+
     public void popOutRecord(int slot) {
-        if (this.level != null && !this.level.isClientSide) {
-            BlockPos blockpos = this.getBlockPos();
-            ItemStack stack = itemStackHandler.getStackInSlot(slot).copy();
-            itemStackHandler.setStackInSlot(slot, ItemStack.EMPTY);
+        if (this.world != null && !this.world.isClient) {
+            BlockPos blockpos = this.getPos();
+            ItemStack stack = itemStackHandler.getStack(slot).copy();
+            itemStackHandler.setStack(slot, ItemStack.EMPTY);
             if (!stack.isEmpty()) {
-                Vec3 vec3 = Vec3.atLowerCornerWithOffset(blockpos, 0.5D, 1.01D, 0.5D).offsetRandom(this.level.random, 0.7F);
-                ItemEntity itementity = new ItemEntity(this.level, vec3.x(), vec3.y(), vec3.z(), stack);
-                itementity.setDefaultPickUpDelay();
-                this.level.addFreshEntity(itementity);
+                Vec3d vec3 = Vec3d.add(blockpos, 0.5D, 1.01D, 0.5D).addRandom(this.world.random, 0.7F);
+                ItemEntity itementity = new ItemEntity(this.world, vec3.getX(), vec3.getY(), vec3.getZ(), stack);
+                itementity.setToDefaultPickupDelay();
+                this.world.spawnEntity(itementity);
             }
             if (slot == getCurrentSlotPlaying()) stopPlaying();
         }
     }
 
-    public void spawnMusicParticles(Level pLevel, BlockPos pPos, BlockState pState) {
-        if (pLevel instanceof ServerLevel serverlevel) {
-            Vec3 vec3 = Vec3.atBottomCenterOf(pPos).add(0.0D, 1.2F, 0.0D);
+    public void spawnMusicParticles(World pLevel, BlockPos pPos, BlockState pState) {
+        if (pLevel instanceof ServerWorld serverWorld) {
+            Vec3d vec3 = Vec3d.of(pPos).add(0.0D, 1.2F, 0.0D);
             float f = (float) pLevel.getRandom().nextInt(4) / 24.0F;
-            serverlevel.sendParticles(ParticleTypes.NOTE, vec3.x(), vec3.y(), vec3.z(), 0, f, 0.0D, 0.0D, 1.0D);
-            pLevel.gameEvent(GameEvent.JUKEBOX_PLAY, pPos, GameEvent.Context.of(pState));
+            serverWorld.spawnParticles(ParticleTypes.NOTE, vec3.getX(), vec3.getY(), vec3.getZ(), 0, f, 0.0D, 0.0D, 1.0D);
+            pLevel.emitGameEvent(GameEvent.JUKEBOX_PLAY, pPos, GameEvent.Emitter.of(pState));
         }
     }
 
     protected boolean shouldRecordStopPlaying() {
         if (!isPlaying) return false;
         if (getPlayingItem().isEmpty()) return true;
-        return Objects.requireNonNull(level).getGameTime() >= this.playingStarted + (long) ((RecordItem) getPlayingItem().getItem()).getLengthInTicks() + getDelayBetweenRecords();
+        return Objects.requireNonNull(world).getTime() >= this.playingStarted + (long) ((MusicDiscItem) getPlayingItem().getItem()).getSongLengthInTicks() + getDelayBetweenRecords();
     }
 
     protected void setHasRecordBlockState(boolean pHasRecord) {
-        if (Objects.requireNonNull(this.level).getBlockState(this.getBlockPos()) == this.getBlockState()) {
-            this.level.setBlock(this.getBlockPos(), this.getBlockState().setValue(JukeboxBlock.HAS_RECORD, pHasRecord), 2);
-            this.level.gameEvent(GameEvent.BLOCK_CHANGE, this.getBlockPos(), GameEvent.Context.of(null, this.getBlockState()));
+        if (Objects.requireNonNull(this.world).getBlockState(this.getPos()) == this.getCachedState()) {
+            this.world.setBlockState(this.getPos(), this.getCachedState().with(JukeboxBlock.HAS_RECORD, pHasRecord), 2);
+            this.world.emitGameEvent(GameEvent.BLOCK_CHANGE, this.getPos(), GameEvent.Emitter.of(null, this.getCachedState()));
         }
     }
 
@@ -114,21 +118,21 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
         if (isPlaying) return;
         isPlaying = true;
         if (getPlayingItem().isEmpty()) return;
-        playingStarted = Objects.requireNonNull(level).getGameTime();
-        this.setChanged();
-        this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
-        this.level.levelEvent(LevelEvent.SOUND_PLAY_JUKEBOX_SONG, getBlockPos(), Item.getId(this.getPlayingItem().getItem()));
+        playingStarted = Objects.requireNonNull(world).getTime();
+        this.markDirty();
+        this.world.updateNeighborsAlways(this.getPos(), this.getCachedState().getBlock());
+        this.world.syncWorldEvent(WorldEvents.JUKEBOX_STARTS_PLAYING, getPos(), Item.getRawId(this.getPlayingItem().getItem()));
         sendUpdate();
     }
 
     public void stopPlaying() {
         if (!isPlaying) return;
         isPlaying = false;
-        Objects.requireNonNull(this.level).gameEvent(GameEvent.JUKEBOX_STOP_PLAY, this.getBlockPos(), GameEvent.Context.of(this.getBlockState()));
-        this.playingStopped = level.getGameTime();
-        this.setChanged();
-        this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
-        this.level.levelEvent(LevelEvent.SOUND_STOP_JUKEBOX_SONG, getBlockPos(), 0);
+        Objects.requireNonNull(this.world).emitGameEvent(GameEvent.JUKEBOX_STOP_PLAY, this.getPos(), GameEvent.Emitter.of(this.getCachedState()));
+        this.playingStopped = world.getTime();
+        this.markDirty();
+        this.world.updateNeighborsAlways(this.getPos(), this.getCachedState().getBlock());
+        this.world.syncWorldEvent(WorldEvents.JUKEBOX_STOPS_PLAYING, getPos(), 0);
         sendUpdate();
     }
 
@@ -136,31 +140,32 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
         return 1;
     }
 
-    public final ItemStackHandler itemStackHandler = new ItemStackHandler(getContainerSize()) {
+    public final SimpleInventory itemStackHandler = new SimpleInventory(getContainerSize()) {
         @Override
-        public boolean isItemValid(int slot, ItemStack stack) {
-            return stack.is(ItemTags.MUSIC_DISCS);
+        public boolean isValid(int slot, ItemStack stack) {
+            return stack.isIn(ItemTags.MUSIC_DISCS);
         }
 
         @Override
-        protected void onContentsChanged(int slot) {
-            setChanged();
+        public void markDirty() {
+            super.markDirty();
+            AbstractRSJukeboxBE.this.markDirty();
             sendUpdate();
         }
     };
 
     public ItemStack getPlayingItem() {
-        return itemStackHandler.getStackInSlot(getCurrentSlotPlaying());
+        return itemStackHandler.getStack(getCurrentSlotPlaying());
     }
 
     @Override
     public void tick() {
-        if (level == null || level.isClientSide) return;
+        if (world == null || world.isClient()) return;
         if (shouldRecordStopPlaying()) {
             stopPlaying();
         }
-        if (isPlaying && level.getGameTime() % 20 == 0) {
-            spawnMusicParticles(level, getBlockPos(), getBlockState());
+        if (isPlaying && world.getTime() % 20 == 0) {
+            spawnMusicParticles(world, getPos(), world.getBlockState(getPos()));
         }
         boolean hasPlayableItem = !getPlayingItem().isEmpty();
         if (this.hasPlayableItem == null || hasPlayableItem != this.hasPlayableItem) {
@@ -178,7 +183,7 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
     @Override
     public State getState(StateTypeEnum stateType) {
         rendererState.discInserted = !getPlayingItem().isEmpty();
-        rendererState.discItemId = Item.getId(getPlayingItem().getItem());
+        rendererState.discItemId = Item.getRawId(getPlayingItem().getItem());
         rendererState.playing = isPlaying;
         rendererState.playingStarted = playingStarted;
         rendererState.playingStopped = playingStopped;
@@ -209,41 +214,41 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
     public void setState(StateTypeEnum stateType, State state) {
         if (state instanceof GenericRSJukeboxRendererState newState) {
             rendererState = newState;
-            setChanged();
+            markDirty();
         }
     }
 
-    protected PacketDistributor.TargetPoint targetPoint;
+    protected TargetPoint targetPoint;
 
     @Override
-    public void onLoad() {
-        super.onLoad();
-        if (level == null) return;
-        if (!level.isClientSide) {
-            var pos = getBlockPos();
-            targetPoint = new PacketDistributor.TargetPoint(pos.getX(), pos.getY(), pos.getZ(), 512, level.dimension());
+    public void cancelRemoval() {
+        super.cancelRemoval();
+        if (world == null) return;
+        if (!world.isClient) {
+            var pos = getPos();
+            targetPoint = new TargetPoint(pos.getX(), pos.getY(), pos.getZ(), 512, (ServerWorld) world);
         }
         sendUpdate();
         sendRequest();
     }
 
     public void sendUpdate() {
-        if (level == null) return;
-        if (level.isClientSide) return;
+        if (world == null) return;
+        if (world.isClient) return;
         sendState(StateTypeEnum.JUKEBOX_UPDATE, getState(StateTypeEnum.JUKEBOX_UPDATE));
     }
 
     public void sendRequest() {
-        if (level == null) return;
-        if (!level.isClientSide) return;
-        RSJPacketHandler.sendToServer(new StateUpdateRequestToServer(getBlockPos(), StateTypeEnum.JUKEBOX_UPDATE));
+        if (world == null) return;
+        if (!world.isClient) return;
+        RSJPacketHandlerClient.sendToServer(new StateUpdateRequestToServer(getPos(), StateTypeEnum.JUKEBOX_UPDATE));
     }
 
     public void sendState(StateTypeEnum type, State state) {
-        if (level == null || level.isClientSide) return;
+        if (world == null || world.isClient) return;
 
         if (targetPoint != null) {
-            RSJPacketHandler.sendToClient(new StateUpdatePacketToClient(getBlockPos(), type, state), targetPoint);
+            RSJPacketHandler.sendToClient(new StateUpdatePacketToClient(getPos(), type, state), targetPoint);
         } else {
             RSJukeboxes.logger.debug("targetPoint was null trying to send " + type + " from " + this.getClass().getCanonicalName());
         }
@@ -251,10 +256,9 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
 
 
     @Override
-    @ParametersAreNonnullByDefault
-    public void load(CompoundTag compound) {
-        super.load(compound);
-        itemStackHandler.deserializeNBT(compound.getCompound("itemStackHandler"));
+    public void readNbt(NbtCompound compound) {
+        super.readNbt(compound);
+        itemStackHandler.readNbtList(compound.getList("itemStackHandler", NbtElement.COMPOUND_TYPE));
         isPlaying = compound.getBoolean("isPlaying");
         playingStarted = compound.getLong("playingStarted");
         playingStopped = compound.getLong("playingStopped");
@@ -262,10 +266,9 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
     }
 
     @Override
-    @ParametersAreNonnullByDefault
-    protected void saveAdditional(CompoundTag compound) {
-        super.saveAdditional(compound);
-        compound.put("itemStackHandler", itemStackHandler.serializeNBT());
+    protected void writeNbt(NbtCompound compound) {
+        super.writeNbt(compound);
+        compound.put("itemStackHandler", itemStackHandler.toNbtList());
         compound.putBoolean("isPlaying", isPlaying);
         compound.putLong("playingStarted", playingStarted);
         compound.putLong("playingStopped", playingStopped);

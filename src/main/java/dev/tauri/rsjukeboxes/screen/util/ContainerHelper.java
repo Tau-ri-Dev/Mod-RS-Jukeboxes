@@ -1,15 +1,15 @@
 package dev.tauri.rsjukeboxes.screen.util;
 
 
-import net.minecraft.world.Container;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.screen.slot.Slot;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContainerHelper {
 
-    public static List<Slot> generatePlayerSlots(Container playerInventory, int yInventory) {
+    public static List<Slot> generatePlayerSlots(PlayerInventory playerInventory, int yInventory) {
         List<Slot> slots = new ArrayList<>(39);
 
         slots.addAll(generateSlotRow(playerInventory, 0, 8, 18, yInventory + 58)); // 144
@@ -21,7 +21,7 @@ public class ContainerHelper {
         return slots;
     }
 
-    public static List<Slot> generateSlotRow(Container playerInventory, int firstIndex, int xStart, int xOffset, int y) {
+    public static List<Slot> generateSlotRow(PlayerInventory playerInventory, int firstIndex, int xStart, int xOffset, int y) {
         List<Slot> slots = new ArrayList<>(9);
 
         for (int col = 0; col < 9; col++) {

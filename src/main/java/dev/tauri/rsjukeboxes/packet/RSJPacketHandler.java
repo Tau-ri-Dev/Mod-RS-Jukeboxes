@@ -2,63 +2,42 @@ package dev.tauri.rsjukeboxes.packet;
 
 import dev.tauri.rsjukeboxes.RSJukeboxes;
 import dev.tauri.rsjukeboxes.packet.packets.JukeboxActionPacketToServer;
-import dev.tauri.rsjukeboxes.packet.packets.StateUpdatePacketToClient;
 import dev.tauri.rsjukeboxes.packet.packets.StateUpdateRequestToServer;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.ChannelBuilder;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.SimpleChannel;
-
-import java.util.Objects;
-import java.util.function.Function;
+import dev.tauri.rsjukeboxes.util.TargetPoint;
+import net.fabricmc.fabric.api.networking.v1.FabricPacket;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Box;
 
 public class RSJPacketHandler {
     private RSJPacketHandler() {
 
     }
 
-    public static void sendToServer(Object packet) {
-        INSTANCE.send(packet, PacketDistributor.SERVER.noArg());
+    public static void sendToClient(FabricPacket packet, TargetPoint point) {
+        for (var player : point.dim().getOtherEntities(null, new Box(
+                point.x() - point.radius(), point.y() - point.radius(), point.z() - point.radius(),
+                point.x() + point.radius(), point.y() + point.radius(), point.z() + point.radius()
+        ), (entity) -> entity instanceof ServerPlayerEntity)) {
+            if (!(player instanceof ServerPlayerEntity sp)) continue;
+            ServerPlayNetworking.send(sp, packet);
+        }
     }
 
-    public static void sendToClient(Object packet, PacketDistributor.TargetPoint point) {
-        INSTANCE.send(packet, PacketDistributor.NEAR.with(point));
+    public static void sendTo(FabricPacket packet, ServerPlayerEntity player) {
+        ServerPlayNetworking.send(player, packet);
     }
-
-    public static void sendTo(Object packet, ServerPlayer player) {
-        INSTANCE.send(packet, PacketDistributor.PLAYER.with(player));
-    }
-
-    public static final int NETWORK_VERSION = 1;
-
-    private static final SimpleChannel INSTANCE = ChannelBuilder.named(new ResourceLocation(RSJukeboxes.MOD_ID, "main"))
-            .clientAcceptedVersions((status, version) -> Objects.equals(version, NETWORK_VERSION))
-            .serverAcceptedVersions((status, version) -> Objects.equals(version, NETWORK_VERSION))
-            .networkProtocolVersion(NETWORK_VERSION)
-            .simpleChannel();
 
     public static void init() {
-        int index = -1;
-        // to server
-        registerPacket(StateUpdateRequestToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, StateUpdateRequestToServer::new);
-        registerPacket(JukeboxActionPacketToServer.class, ++index, NetworkDirection.PLAY_TO_SERVER, JukeboxActionPacketToServer::new);
-
-        // to client
-        registerPacket(StateUpdatePacketToClient.class, ++index, NetworkDirection.PLAY_TO_CLIENT, StateUpdatePacketToClient::new);
+        registerPacket(new StateUpdateRequestToServer());
+        registerPacket(new JukeboxActionPacketToServer());
     }
 
-    public static <MSG extends RSJPacket> void registerPacket(Class<MSG> clazz, int id, NetworkDirection direction, Function<FriendlyByteBuf, MSG> decoder) {
+    public static void registerPacket(RSJPacket packet) {
         try {
-            INSTANCE.messageBuilder(clazz, id, direction)
-                    .encoder(RSJPacket::toBytes)
-                    .decoder(decoder)
-                    .consumerNetworkThread(RSJPacket::handle)
-                    .add();
+            ServerPlayNetworking.registerGlobalReceiver(packet.getType(), (p, player, responseSender) -> ((RSJPacket) p).handle(player, responseSender));
         } catch (Exception e) {
-            RSJukeboxes.logger.error("Could not register packet " + id + ": ", e);
+            RSJukeboxes.logger.error("Could not register packet " + packet.getId() + ": ", e);
         }
     }
 }

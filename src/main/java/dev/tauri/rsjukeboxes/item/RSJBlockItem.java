@@ -1,27 +1,29 @@
 package dev.tauri.rsjukeboxes.item;
 
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.block.Block;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 public class RSJBlockItem extends BlockItem implements ITabbedItem {
 
-    private final RegistryObject<CreativeModeTab> tab;
+    private final Supplier<ItemGroup> tab;
     protected final Block rawBlock;
 
-    public RSJBlockItem(Block pBlock, Properties pProperties, @Nullable RegistryObject<CreativeModeTab> tab) {
+    public RSJBlockItem(Block pBlock, Item.Settings pProperties, @Nullable Supplier<ItemGroup> tab) {
         super(pBlock, pProperties);
         this.tab = tab;
         this.rawBlock = pBlock;
     }
 
     @Override
-    public RegistryObject<CreativeModeTab> getTab() {
+    public Supplier<ItemGroup> getTab() {
         return tab;
     }
 
-    public void addAdditional(CreativeModeTab.Output output) {
+    public void addAdditional(ItemGroup.Entries entries) {
     }
 }

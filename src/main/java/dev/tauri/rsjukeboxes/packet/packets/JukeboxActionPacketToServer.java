@@ -1,15 +1,26 @@
 package dev.tauri.rsjukeboxes.packet.packets;
 
+import dev.tauri.rsjukeboxes.RSJukeboxes;
 import dev.tauri.rsjukeboxes.blockentity.AbstractTieredJukeboxBE;
 import dev.tauri.rsjukeboxes.packet.PositionedPacket;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.NetworkDirection;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 
 public class JukeboxActionPacketToServer extends PositionedPacket {
+
+    public JukeboxActionPacketToServer() {
+        super();
+    }
+
+    @Override
+    public Identifier getId() {
+        return new Identifier(RSJukeboxes.MOD_ID, "jukebox_action_packet_to_server");
+    }
+
     public enum JukeboxAction {
         NONE,
         PLAY,
@@ -25,56 +36,53 @@ public class JukeboxActionPacketToServer extends PositionedPacket {
         this.action = action;
     }
 
-    public JukeboxActionPacketToServer(FriendlyByteBuf buf) {
+    public JukeboxActionPacketToServer(PacketByteBuf buf) {
         super(buf);
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketByteBuf buf) {
         super.toBytes(buf);
         buf.writeInt(action.ordinal());
     }
 
     @Override
-    public void fromBytes(FriendlyByteBuf buf) {
+    public void fromBytes(PacketByteBuf buf) {
         super.fromBytes(buf);
         action = JukeboxAction.values()[buf.readInt()];
     }
 
     @Override
-    public void handle(CustomPayloadEvent.Context ctx) {
-        if (ctx.getDirection() != NetworkDirection.PLAY_TO_SERVER) return;
-        ctx.setPacketHandled(true);
-        ServerPlayer player = ctx.getSender();
-        if (player != null) {
-            ServerLevel level = player.serverLevel();
-            ctx.enqueueWork(() -> {
-                var entity = level.getBlockEntity(pos);
-                if (!(entity instanceof AbstractTieredJukeboxBE jukebox)) return;
-                switch (action) {
-                    case PLAY:
-                        if (jukebox.isPlaying()) break;
-                        if (!jukebox.hasPlayableItem()) break;
-                        jukebox.startPlaying();
-                        break;
-                    case STOP:
-                        if (!jukebox.isPlaying()) break;
-                        jukebox.stopPlayingAndDoNotSkip();
-                        break;
-                    case NEXT:
-                        jukebox.selectNextTrack();
-                        if (!jukebox.hasPlayableItem()) break;
-                        jukebox.startPlaying();
-                        break;
-                    case PREVIOUS:
-                        jukebox.selectPreviousTrack();
-                        if (!jukebox.hasPlayableItem()) break;
-                        jukebox.startPlaying();
-                        break;
-                    default:
-                        break;
-                }
-            });
-        }
+    public void handle(PlayerEntity player, PacketSender responseSender) {
+        if (!(player instanceof ServerPlayerEntity sp)) return;
+        var level = sp.getServerWorld();
+        if (level == null) return;
+        level.getServer().execute(() -> {
+            var entity = level.getBlockEntity(pos);
+            if (!(entity instanceof AbstractTieredJukeboxBE jukebox)) return;
+            switch (action) {
+                case PLAY:
+                    if (jukebox.isPlaying()) break;
+                    if (!jukebox.hasPlayableItem()) break;
+                    jukebox.startPlaying();
+                    break;
+                case STOP:
+                    if (!jukebox.isPlaying()) break;
+                    jukebox.stopPlayingAndDoNotSkip();
+                    break;
+                case NEXT:
+                    jukebox.selectNextTrack();
+                    if (!jukebox.hasPlayableItem()) break;
+                    jukebox.startPlaying();
+                    break;
+                case PREVIOUS:
+                    jukebox.selectPreviousTrack();
+                    if (!jukebox.hasPlayableItem()) break;
+                    jukebox.startPlaying();
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 }

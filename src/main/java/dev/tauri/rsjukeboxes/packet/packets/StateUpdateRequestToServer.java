@@ -6,15 +6,24 @@ import dev.tauri.rsjukeboxes.packet.RSJPacketHandler;
 import dev.tauri.rsjukeboxes.state.State;
 import dev.tauri.rsjukeboxes.state.StateProviderInterface;
 import dev.tauri.rsjukeboxes.state.StateTypeEnum;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.NetworkDirection;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.NotImplementedException;
 
 public class StateUpdateRequestToServer extends PositionedPacket {
+    public StateUpdateRequestToServer() {
+        super();
+    }
+
+    @Override
+    public Identifier getId() {
+        return new Identifier(RSJukeboxes.MOD_ID, "state_update_request_to_server");
+    }
+
     StateTypeEnum stateType;
 
     public StateUpdateRequestToServer(BlockPos pos, StateTypeEnum stateType) {
@@ -22,46 +31,42 @@ public class StateUpdateRequestToServer extends PositionedPacket {
         this.stateType = stateType;
     }
 
-    public StateUpdateRequestToServer(FriendlyByteBuf buf) {
+    public StateUpdateRequestToServer(PacketByteBuf buf) {
         super(buf);
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketByteBuf buf) {
         super.toBytes(buf);
 
         buf.writeInt(stateType.id);
     }
 
     @Override
-    public void fromBytes(FriendlyByteBuf buf) {
+    public void fromBytes(PacketByteBuf buf) {
         super.fromBytes(buf);
         stateType = StateTypeEnum.byId(buf.readInt());
     }
 
     @Override
-    public void handle(CustomPayloadEvent.Context ctx) {
-        if (ctx.getDirection() != NetworkDirection.PLAY_TO_SERVER) return;
-        ctx.setPacketHandled(true);
-        ServerPlayer player = ctx.getSender();
-        if (player != null) {
-            ServerLevel level = player.serverLevel();
-            ctx.enqueueWork(() -> {
-                StateProviderInterface te = (StateProviderInterface) level.getBlockEntity(pos);
+    public void handle(PlayerEntity player, PacketSender responseSender) {
+        if (!(player instanceof ServerPlayerEntity sp)) return;
+        var level = sp.getServerWorld();
+        level.getServer().execute(() -> {
+            StateProviderInterface te = (StateProviderInterface) level.getBlockEntity(pos);
 
-                if (te != null) {
-                    try {
-                        State state = te.getState(stateType);
+            if (te != null) {
+                try {
+                    State state = te.getState(stateType);
 
-                        if (state != null)
-                            RSJPacketHandler.sendTo(new StateUpdatePacketToClient(pos, stateType, state), player);
-                        else
-                            throw new NotImplementedException("State not implemented on " + te.getClass().getCanonicalName() + " : " + stateType.toString());
-                    } catch (Exception e) {
-                        RSJukeboxes.logger.error("Error while handling packet!", e);
-                    }
+                    if (state != null)
+                        RSJPacketHandler.sendTo(new StateUpdatePacketToClient(pos, stateType, state), sp);
+                    else
+                        throw new NotImplementedException("State not implemented on " + te.getClass().getCanonicalName() + " : " + stateType.toString());
+                } catch (Exception e) {
+                    RSJukeboxes.logger.error("Error while handling packet!", e);
                 }
-            });
-        }
+            }
+        });
     }
 }

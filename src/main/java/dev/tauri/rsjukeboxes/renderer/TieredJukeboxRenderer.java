@@ -1,9 +1,9 @@
 package dev.tauri.rsjukeboxes.renderer;
 
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 
 public class TieredJukeboxRenderer extends AbstractRSJukeboxRenderer<GenericRSJukeboxRendererState> {
-    public TieredJukeboxRenderer(BlockEntityRendererProvider.Context ctx) {
+    public TieredJukeboxRenderer(BlockEntityRendererFactory.Context ctx) {
         super(ctx);
     }
 

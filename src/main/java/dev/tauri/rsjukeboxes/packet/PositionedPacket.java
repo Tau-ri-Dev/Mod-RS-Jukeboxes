@@ -1,7 +1,7 @@
 package dev.tauri.rsjukeboxes.packet;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.math.BlockPos;
 
 public abstract class PositionedPacket extends RSJPacket {
     public PositionedPacket() {
@@ -13,17 +13,17 @@ public abstract class PositionedPacket extends RSJPacket {
         this.pos = pos;
     }
 
-    public PositionedPacket(FriendlyByteBuf buf) {
+    public PositionedPacket(PacketByteBuf buf) {
         super(buf);
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketByteBuf buf) {
         buf.writeBlockPos(pos);
     }
 
     @Override
-    public void fromBytes(FriendlyByteBuf buf) {
+    public void fromBytes(PacketByteBuf buf) {
         pos = buf.readBlockPos();
     }
 }

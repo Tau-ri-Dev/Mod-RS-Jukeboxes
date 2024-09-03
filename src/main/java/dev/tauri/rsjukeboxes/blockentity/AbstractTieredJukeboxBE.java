@@ -1,12 +1,10 @@
 package dev.tauri.rsjukeboxes.blockentity;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 
 public abstract class AbstractTieredJukeboxBE extends AbstractRSJukeboxBE {
     protected boolean isPowered = false;
@@ -33,7 +31,7 @@ public abstract class AbstractTieredJukeboxBE extends AbstractRSJukeboxBE {
     @Override
     public void tick() {
         super.tick();
-        if (level == null || level.isClientSide) return;
+        if (world == null || world.isClient) return;
         if (!hasPlayableItem()) {
             selectFirstPlayableSlot(false);
         }
@@ -45,8 +43,8 @@ public abstract class AbstractTieredJukeboxBE extends AbstractRSJukeboxBE {
             }
         }
         lastPowerState = isPowered;
-        if (level.getGameTime() - playingStopped == (STOP_REDSTONE_LENGTH + 1)) {
-            this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
+        if (world.getTime() - playingStopped == (STOP_REDSTONE_LENGTH + 1)) {
+            this.world.updateNeighborsAlways(this.getPos(), this.getCachedState().getBlock());
         }
     }
 
@@ -63,7 +61,7 @@ public abstract class AbstractTieredJukeboxBE extends AbstractRSJukeboxBE {
     }
 
     protected void selectFirstPlayableSlot(boolean previous) {
-        if (level == null || level.isClientSide) return;
+        if (world == null || world.isClient) return;
         stopPlayingAndDoNotSkip();
         var offset = currentSlotPlaying;
         for (int i = offset; (previous ? (i > -getContainerSize() + offset) : (i < getContainerSize() + offset)); i += (previous ? -1 : 1)) {
@@ -71,7 +69,7 @@ public abstract class AbstractTieredJukeboxBE extends AbstractRSJukeboxBE {
             while (slot < 0) {
                 slot += getContainerSize();
             }
-            if (itemStackHandler.getStackInSlot(slot).isEmpty()) continue;
+            if (itemStackHandler.getStack(slot).isEmpty()) continue;
             if (slot == currentSlotPlaying) continue;
             this.currentSlotPlaying = slot;
             break;
@@ -81,33 +79,31 @@ public abstract class AbstractTieredJukeboxBE extends AbstractRSJukeboxBE {
     }
 
     public void selectNextTrack() {
-        if (level == null || level.getGameTime() - lastTrackChangeTime < 2) return;
-        lastTrackChangeTime = level.getGameTime();
+        if (world == null || world.getTime() - lastTrackChangeTime < 2) return;
+        lastTrackChangeTime = world.getTime();
         selectFirstPlayableSlot(false);
     }
 
     public void selectPreviousTrack() {
-        if (level == null || level.getGameTime() - lastTrackChangeTime < 2) return;
-        lastTrackChangeTime = level.getGameTime();
+        if (world == null || world.getTime() - lastTrackChangeTime < 2) return;
+        lastTrackChangeTime = world.getTime();
         selectFirstPlayableSlot(true);
     }
 
     @Override
-    @ParametersAreNonnullByDefault
-    public void load(CompoundTag compound) {
-        super.load(compound);
+    public void readNbt(NbtCompound compound) {
+        super.readNbt(compound);
         isPowered = compound.getBoolean("isPowered");
         lastPowerState = compound.getBoolean("lastPowerState");
     }
 
     @Override
-    @ParametersAreNonnullByDefault
-    protected void saveAdditional(CompoundTag compound) {
-        super.saveAdditional(compound);
+    protected void writeNbt(NbtCompound compound) {
+        super.writeNbt(compound);
         compound.putBoolean("isPowered", isPowered);
         compound.putBoolean("lastPowerState", lastPowerState);
     }
 
 
-    public abstract ResourceLocation getGuiBackground();
+    public abstract Identifier getGuiBackground();
 }

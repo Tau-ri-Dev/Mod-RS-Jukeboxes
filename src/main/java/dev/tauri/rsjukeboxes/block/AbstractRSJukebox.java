@@ -5,111 +5,110 @@ import dev.tauri.rsjukeboxes.item.ITabbedItem;
 import dev.tauri.rsjukeboxes.registry.TabRegistry;
 import dev.tauri.rsjukeboxes.util.ITickable;
 import dev.tauri.rsjukeboxes.util.ItemHelper;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.stats.Stats;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.JukeboxBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.block.*;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.MusicDiscItem;
+import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.stat.Stats;
+import net.minecraft.state.StateManager;
+import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
-import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
+import static net.minecraft.state.property.Properties.HORIZONTAL_FACING;
 
 @SuppressWarnings("deprecation")
 public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedItem {
-    public AbstractRSJukebox(Properties properties) {
-        super(properties.isRedstoneConductor((pState, pLevel, pPos) -> false));
-        this.registerDefaultState(defaultBlockState().setValue(HORIZONTAL_FACING, Direction.NORTH));
+    public AbstractRSJukebox() {
+        super(AbstractBlock.Settings.copy(Blocks.JUKEBOX));
+        setDefaultState(getDefaultState().with(HORIZONTAL_FACING, Direction.NORTH));
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack itemStack, @Nullable BlockGetter blockGetter, @NotNull List<Component> components, @NotNull TooltipFlag tooltipFlag) {
-        ItemHelper.applyGenericToolTip(getDescriptionId(), components, tooltipFlag);
+    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
+        ItemHelper.applyGenericToolTip(getTranslationKey(), tooltip, options);
     }
 
     @Override
-    public RegistryObject<CreativeModeTab> getTab() {
+    public Supplier<ItemGroup> getTab() {
         return TabRegistry.TAB_JUKEBOXES;
     }
 
     @Override
-    @ParametersAreNonnullByDefault
-    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
-        super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
-        Direction facing = pPlacer == null ? Direction.NORTH : pPlacer.getDirection().getOpposite();
-        pLevel.setBlock(pPos, pState.setValue(HORIZONTAL_FACING, facing), 3);
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.onPlaced(world, pos, state, placer, itemStack);
+        Direction facing = placer == null ? Direction.NORTH : placer.getHorizontalFacing().getOpposite();
+        world.setBlockState(pos, state.with(HORIZONTAL_FACING, facing), 3);
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
-        super.createBlockStateDefinition(pBuilder);
+    protected void appendProperties(StateManager.Builder<Block, BlockState> pBuilder) {
+        super.appendProperties(pBuilder);
         pBuilder.add(HORIZONTAL_FACING);
     }
 
-    @ParametersAreNonnullByDefault
-    public @NotNull InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        if (!pLevel.isClientSide) {
+    @Override
+    public ActionResult onUse(BlockState state, World pLevel, BlockPos pPos, PlayerEntity pPlayer, Hand pHand, BlockHitResult hit) {
+        if (!pLevel.isClient()) {
             BlockEntity blockentity = pLevel.getBlockEntity(pPos);
             if (blockentity instanceof AbstractRSJukeboxBE jukebox) {
-                var item = pPlayer.getItemInHand(pHand);
+                var item = pPlayer.getStackInHand(pHand);
                 if (jukebox.hasPlayableItem()) {
                     jukebox.popOutRecord(0);
-                    jukebox.setChanged();
-                    return InteractionResult.sidedSuccess(false);
+                    jukebox.markDirty();
+                    return ActionResult.success(false);
                 }
-                if (item.is(ItemTags.MUSIC_DISCS) && !item.isEmpty()) {
-                    jukebox.itemStackHandler.setStackInSlot(0, item.copy());
-                    item.shrink(1);
+                if (item.isIn(ItemTags.MUSIC_DISCS) && !item.isEmpty()) {
+                    jukebox.itemStackHandler.setStack(0, item.copy());
+                    item.decrement(1);
                     jukebox.setChanged();
-                    pPlayer.awardStat(Stats.PLAY_RECORD);
-                    return InteractionResult.sidedSuccess(false);
+                    pPlayer.incrementStat(Stats.PLAY_RECORD);
+                    return ActionResult.success(false);
                 }
             }
         }
 
-        return InteractionResult.PASS;
+        return ActionResult.PASS;
     }
 
-    @ParametersAreNonnullByDefault
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-        if (!pState.is(pNewState.getBlock())) {
+    @Override
+    public void onStateReplaced(BlockState pState, World pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
+        if (!pState.isOf(pNewState.getBlock())) {
             BlockEntity blockentity = pLevel.getBlockEntity(pPos);
             if (blockentity instanceof AbstractRSJukeboxBE jukebox) {
                 jukebox.popOutRecords();
             }
 
-            super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
+            super.onStateReplaced(pState, pLevel, pPos, pNewState, pIsMoving);
         }
     }
 
-    @ParametersAreNonnullByDefault
-    public boolean isSignalSource(BlockState pState) {
+    @Override
+    public boolean emitsRedstonePower(BlockState pState) {
         return true;
     }
 
-    public AbstractRSJukeboxBE getJukeboxBE(BlockGetter level, BlockPos pos) {
+    public AbstractRSJukeboxBE getJukeboxBE(BlockView level, BlockPos pos) {
         if (level == null) return null;
         if (pos == null) return null;
         var tile = level.getBlockEntity(pos);
@@ -119,60 +118,56 @@ public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedI
     }
 
     @Override
-    @ParametersAreNonnullByDefault
-    public int getSignal(BlockState pState, BlockGetter pLevel, BlockPos pPos, Direction direction) {
-        if (pLevel instanceof ClientLevel) return 0;
+    public int getWeakRedstonePower(BlockState pState, BlockView pLevel, BlockPos pPos, Direction direction) {
+        if (pLevel instanceof ClientWorld) return 0;
         var jukeboxBE = getJukeboxBE(pLevel, pPos);
         if (jukeboxBE == null) return 0;
-        var blockDirection = pState.getValue(HORIZONTAL_FACING);
-        var directionRotated = Direction.fromYRot(blockDirection.toYRot() + direction.toYRot());
+        var blockDirection = pState.get(HORIZONTAL_FACING);
+        var directionRotated = Direction.fromRotation(blockDirection.asRotation() + direction.asRotation());
         if (blockDirection.getAxis() == Direction.Axis.Z) directionRotated = directionRotated.getOpposite();
         return getOutputSignal(pState, pLevel, pPos, direction.getAxis() == Direction.Axis.Y ? direction : directionRotated, jukeboxBE);
     }
 
     @Override
-    @ParametersAreNonnullByDefault
-    public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pBlock, BlockPos pFromPos, boolean pIsMoving) {
-        super.neighborChanged(pState, pLevel, pPos, pBlock, pFromPos, pIsMoving);
-        if (pLevel.isClientSide) return;
+    public void neighborUpdate(BlockState pState, World pLevel, BlockPos pPos, Block pBlock, BlockPos pFromPos, boolean pIsMoving) {
+        super.neighborUpdate(pState, pLevel, pPos, pBlock, pFromPos, pIsMoving);
+        if (pLevel.isClient) return;
         var jukeboxBE = getJukeboxBE(pLevel, pPos);
         if (jukeboxBE == null) return;
-        var blockDirection = pState.getValue(HORIZONTAL_FACING);
+        var blockDirection = pState.get(HORIZONTAL_FACING);
         var signals = new HashMap<Direction, Integer>();
         for (var direction : Direction.values()) {
-            if (!pPos.offset(direction.getNormal()).equals(pFromPos)) continue;
-            var directionRotated = Direction.fromYRot(blockDirection.toYRot() + direction.toYRot());
+            if (!pPos.offset(direction).equals(pFromPos)) continue;
+            var directionRotated = Direction.fromRotation(blockDirection.asRotation() + direction.asRotation());
             if (blockDirection.getAxis() == Direction.Axis.Z) directionRotated = directionRotated.getOpposite();
-            signals.put(direction.getAxis() == Direction.Axis.Y ? direction : directionRotated, pLevel.getSignal(pPos.offset(direction.getNormal()), direction));
+            signals.put(direction.getAxis() == Direction.Axis.Y ? direction : directionRotated, pLevel.getEmittedRedstonePower(pPos.offset(direction), direction));
         }
         processInputSignal(pState, pLevel, pPos, pFromPos, signals, jukeboxBE);
     }
 
 
-    @ParametersAreNonnullByDefault
-    public int getOutputSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction, AbstractRSJukeboxBE jukeboxBE) {
+    public int getOutputSignal(BlockState state, BlockView level, BlockPos pos, Direction direction, AbstractRSJukeboxBE jukeboxBE) {
         if (jukeboxBE.isPlaying()) {
             return 15;
         }
         return 0;
     }
 
-    @ParametersAreNonnullByDefault
-    public void processInputSignal(BlockState state, BlockGetter level, BlockPos pos, BlockPos changedPos, Map<Direction, Integer> signals, AbstractRSJukeboxBE jukeboxBE) {
+    public void processInputSignal(BlockState state, BlockView level, BlockPos pos, BlockPos changedPos, Map<Direction, Integer> signals, AbstractRSJukeboxBE jukeboxBE) {
     }
 
-    @ParametersAreNonnullByDefault
-    public boolean hasAnalogOutputSignal(BlockState pState) {
+    @Override
+    public boolean hasComparatorOutput(BlockState pState) {
         return true;
     }
 
-    @ParametersAreNonnullByDefault
-    public int getAnalogOutputSignal(BlockState pBlockState, Level pLevel, BlockPos pPos) {
+    @Override
+    public int getComparatorOutput(BlockState pBlockState, World pLevel, BlockPos pPos) {
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
         if (blockentity instanceof AbstractRSJukeboxBE jukebox) {
             Item item = jukebox.getPlayingItem().getItem();
-            if (item instanceof RecordItem recorditem) {
-                return recorditem.getAnalogOutput();
+            if (item instanceof MusicDiscItem recorditem) {
+                return recorditem.getComparatorOutput();
             }
         }
 
@@ -180,17 +175,15 @@ public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedI
     }
 
     @Override
-    @ParametersAreNonnullByDefault
-    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return createBlockEntity(pPos, pState);
+    public BlockEntity createBlockEntity(BlockPos pPos, BlockState pState) {
+        return newBlockEntity(pPos, pState);
     }
 
-    public abstract BlockEntity createBlockEntity(BlockPos pPos, BlockState pState);
+    public abstract BlockEntity newBlockEntity(BlockPos pPos, BlockState pState);
 
     @Nullable
     @Override
-    @ParametersAreNonnullByDefault
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
         return ITickable.getTickerHelper();
     }
 }
