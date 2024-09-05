@@ -2,6 +2,7 @@ package dev.tauri.rsjukeboxes.blockentity;
 
 import dev.tauri.rsjukeboxes.registry.BlockEntityRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -53,15 +54,15 @@ public class RepeatingJukeboxBE extends AbstractRSJukeboxBE {
         if (isPlaying() && !isPowered) {
             stopPlaying();
         }
-        if(level.getGameTime() - playingStopped == (STOP_REDSTONE_LENGTH + 1)){
+        if (level.getGameTime() - playingStopped == (STOP_REDSTONE_LENGTH + 1)) {
             this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
         }
     }
 
     @Override
     @ParametersAreNonnullByDefault
-    public void load(CompoundTag compound) {
-        super.load(compound);
+    public void loadAdditional(CompoundTag compound, HolderLookup.Provider pRegistries) {
+        super.loadAdditional(compound, pRegistries);
         isPowered = compound.getBoolean("isPowered");
         tickDelayCoef = compound.getInt("tickDelayCoef");
         tickDelayAddition = compound.getInt("tickDelayAddition");
@@ -69,8 +70,8 @@ public class RepeatingJukeboxBE extends AbstractRSJukeboxBE {
 
     @Override
     @ParametersAreNonnullByDefault
-    protected void saveAdditional(CompoundTag compound) {
-        super.saveAdditional(compound);
+    protected void saveAdditional(CompoundTag compound, HolderLookup.Provider pRegistries) {
+        super.saveAdditional(compound, pRegistries);
         compound.putBoolean("isPowered", isPowered);
         compound.putInt("tickDelayCoef", tickDelayCoef);
         compound.putInt("tickDelayAddition", tickDelayAddition);

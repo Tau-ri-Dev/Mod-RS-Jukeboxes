@@ -9,13 +9,13 @@ import dev.tauri.rsjukeboxes.state.State;
 import dev.tauri.rsjukeboxes.state.StateProviderInterface;
 import dev.tauri.rsjukeboxes.state.StateTypeEnum;
 import dev.tauri.rsjukeboxes.util.ITickable;
+import dev.tauri.rsjukeboxes.util.JukeboxPlayableUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.DiscFragmentItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -29,6 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
@@ -57,7 +58,7 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
 
     protected int currentSlotPlaying = 0;
 
-    public int getCurrentSlotPlaying(){
+    public int getCurrentSlotPlaying() {
         return Math.max(0, Math.min(getContainerSize() - 1, currentSlotPlaying));
     }
 
@@ -100,7 +101,10 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
     protected boolean shouldRecordStopPlaying() {
         if (!isPlaying) return false;
         if (getPlayingItem().isEmpty()) return true;
-        return Objects.requireNonNull(level).getGameTime() >= this.playingStarted + (long) ((DiscFragmentItem) getPlayingItem().getItem()).getLengthInTicks() + getDelayBetweenRecords();
+        if (level == null) return true;
+        var song = JukeboxPlayableUtils.getSong(level, getPlayingItem());
+        if (song == null) return true;
+        return level.getGameTime() >= this.playingStarted + (long) song.lengthInTicks() + getDelayBetweenRecords();
     }
 
     protected void setHasRecordBlockState(boolean pHasRecord) {
@@ -138,8 +142,8 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
 
     public final ItemStackHandler itemStackHandler = new ItemStackHandler(getContainerSize()) {
         @Override
-        public boolean isItemValid(int slot, ItemStack stack) {
-            return stack.is(ItemTags.MUSIC_DISCS);
+        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+            return JukeboxPlayableUtils.test(stack);
         }
 
         @Override
@@ -252,9 +256,9 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
 
     @Override
     @ParametersAreNonnullByDefault
-    public void load(CompoundTag compound) {
-        super.load(compound);
-        itemStackHandler.deserializeNBT(compound.getCompound("itemStackHandler"));
+    public void loadAdditional(CompoundTag compound, HolderLookup.Provider pRegistries) {
+        super.loadAdditional(compound, pRegistries);
+        itemStackHandler.deserializeNBT(pRegistries, compound.getCompound("itemStackHandler"));
         isPlaying = compound.getBoolean("isPlaying");
         playingStarted = compound.getLong("playingStarted");
         playingStopped = compound.getLong("playingStopped");
@@ -263,9 +267,9 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
 
     @Override
     @ParametersAreNonnullByDefault
-    protected void saveAdditional(CompoundTag compound) {
-        super.saveAdditional(compound);
-        compound.put("itemStackHandler", itemStackHandler.serializeNBT());
+    protected void saveAdditional(CompoundTag compound, HolderLookup.Provider pRegistries) {
+        super.saveAdditional(compound, pRegistries);
+        compound.put("itemStackHandler", itemStackHandler.serializeNBT(pRegistries));
         compound.putBoolean("isPlaying", isPlaying);
         compound.putLong("playingStarted", playingStarted);
         compound.putLong("playingStopped", playingStopped);

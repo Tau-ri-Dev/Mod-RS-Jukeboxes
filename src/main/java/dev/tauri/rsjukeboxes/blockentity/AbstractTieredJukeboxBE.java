@@ -1,6 +1,7 @@
 package dev.tauri.rsjukeboxes.blockentity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -94,16 +95,16 @@ public abstract class AbstractTieredJukeboxBE extends AbstractRSJukeboxBE {
 
     @Override
     @ParametersAreNonnullByDefault
-    public void load(CompoundTag compound) {
-        super.load(compound);
+    public void loadAdditional(CompoundTag compound, HolderLookup.Provider pRegistries) {
+        super.loadAdditional(compound, pRegistries);
         isPowered = compound.getBoolean("isPowered");
         lastPowerState = compound.getBoolean("lastPowerState");
     }
 
     @Override
     @ParametersAreNonnullByDefault
-    protected void saveAdditional(CompoundTag compound) {
-        super.saveAdditional(compound);
+    protected void saveAdditional(CompoundTag compound, HolderLookup.Provider pRegistries) {
+        super.saveAdditional(compound, pRegistries);
         compound.putBoolean("isPowered", isPowered);
         compound.putBoolean("lastPowerState", lastPowerState);
     }

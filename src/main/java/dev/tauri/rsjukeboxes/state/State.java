@@ -2,6 +2,7 @@ package dev.tauri.rsjukeboxes.state;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -30,7 +31,7 @@ public abstract class State implements INBTSerializable<CompoundTag> {
 	public abstract void fromBytes(ByteBuf buf);
 	
 	@Override
-	public CompoundTag serializeNBT() {
+	public CompoundTag serializeNBT(HolderLookup.Provider registryAccess) {
 		CompoundTag compound = new CompoundTag();
 		
 		ByteBuf buf = Unpooled.buffer();
@@ -45,7 +46,7 @@ public abstract class State implements INBTSerializable<CompoundTag> {
 	}
 	
 	@Override
-	public void deserializeNBT(CompoundTag compound) {
+	public void deserializeNBT(HolderLookup.Provider registryAccess, CompoundTag compound) {
 		if (compound == null)
 			return;
 		

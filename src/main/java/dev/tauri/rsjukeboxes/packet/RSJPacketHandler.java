@@ -5,6 +5,7 @@ import dev.tauri.rsjukeboxes.packet.packets.JukeboxActionPacketToServer;
 import dev.tauri.rsjukeboxes.packet.packets.StateUpdatePacketToClient;
 import dev.tauri.rsjukeboxes.packet.packets.StateUpdateRequestToServer;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.ChannelBuilder;
@@ -34,7 +35,7 @@ public class RSJPacketHandler {
 
     public static final int NETWORK_VERSION = 1;
 
-    private static final SimpleChannel INSTANCE = ChannelBuilder.named(new ResourceLocation(RSJukeboxes.MOD_ID, "main"))
+    private static final SimpleChannel INSTANCE = ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(RSJukeboxes.MOD_ID, "main"))
             .clientAcceptedVersions((status, version) -> Objects.equals(version, NETWORK_VERSION))
             .serverAcceptedVersions((status, version) -> Objects.equals(version, NETWORK_VERSION))
             .networkProtocolVersion(NETWORK_VERSION)
@@ -50,7 +51,7 @@ public class RSJPacketHandler {
         registerPacket(StateUpdatePacketToClient.class, ++index, NetworkDirection.PLAY_TO_CLIENT, StateUpdatePacketToClient::new);
     }
 
-    public static <MSG extends RSJPacket> void registerPacket(Class<MSG> clazz, int id, NetworkDirection direction, Function<FriendlyByteBuf, MSG> decoder) {
+    public static <MSG extends RSJPacket> void registerPacket(Class<MSG> clazz, int id, NetworkDirection<RegistryFriendlyByteBuf> direction, Function<RegistryFriendlyByteBuf, MSG> decoder) {
         try {
             INSTANCE.messageBuilder(clazz, id, direction)
                     .encoder(RSJPacket::toBytes)

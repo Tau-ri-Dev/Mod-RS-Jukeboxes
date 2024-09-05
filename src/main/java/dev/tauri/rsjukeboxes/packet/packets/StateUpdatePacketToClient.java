@@ -12,7 +12,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.NetworkDirection;
 import org.apache.commons.lang3.NotImplementedException;
 
 public class StateUpdatePacketToClient extends PositionedPacket {
@@ -52,7 +51,6 @@ public class StateUpdatePacketToClient extends PositionedPacket {
 
     @Override
     public void handle(CustomPayloadEvent.Context ctx) {
-        if (ctx.getDirection() != NetworkDirection.PLAY_TO_CLIENT) return;
         ctx.setPacketHandled(true);
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;

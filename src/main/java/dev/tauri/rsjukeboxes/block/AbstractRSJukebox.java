@@ -5,18 +5,23 @@ import dev.tauri.rsjukeboxes.item.ITabbedItem;
 import dev.tauri.rsjukeboxes.registry.TabRegistry;
 import dev.tauri.rsjukeboxes.util.ITickable;
 import dev.tauri.rsjukeboxes.util.ItemHelper;
+import dev.tauri.rsjukeboxes.util.JukeboxPlayableUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -31,12 +36,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedItem {
-    public AbstractRSJukebox(Properties properties) {
-        super(properties.isRedstoneConductor((pState, pLevel, pPos) -> false));
+    public AbstractRSJukebox() {
+        super(Properties.ofFullCopy(Blocks.JUKEBOX).isRedstoneConductor((pState, pLevel, pPos) -> false));
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack itemStack, @Nullable BlockGetter blockGetter, @NotNull List<Component> components, @NotNull TooltipFlag tooltipFlag) {
+    @ParametersAreNonnullByDefault
+    public void appendHoverText(ItemStack pStack, Item.TooltipContext pContext, List<Component> components, TooltipFlag tooltipFlag) {
         ItemHelper.applyGenericToolTip(getDescriptionId(), components, tooltipFlag);
     }
 
@@ -61,7 +67,7 @@ public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedI
                     jukebox.setChanged();
                     return InteractionResult.sidedSuccess(false);
                 }
-                if (item.is(ItemTags.MUSIC_DISCS) && !item.isEmpty()) {
+                if (JukeboxPlayableUtils.test(item) && !item.isEmpty()) {
                     jukebox.itemStackHandler.setStackInSlot(0, item.copy());
                     item.shrink(1);
                     jukebox.setChanged();
@@ -72,6 +78,23 @@ public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedI
         }
 
         return InteractionResult.PASS;
+    }
+
+    @Override
+    @ParametersAreNonnullByDefault
+    @NotNull
+    protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
+        return use(pState, pLevel, pPos, pPlayer, InteractionHand.MAIN_HAND, pHitResult);
+    }
+
+    @Override
+    @ParametersAreNonnullByDefault
+    @NotNull
+    protected ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult) {
+        if (use(pState, pLevel, pPos, pPlayer, pHand, pHitResult) == InteractionResult.PASS) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+        return ItemInteractionResult.sidedSuccess(false);
     }
 
     @ParametersAreNonnullByDefault
@@ -112,9 +135,11 @@ public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedI
     public int getAnalogOutputSignal(BlockState pBlockState, Level pLevel, BlockPos pPos) {
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
         if (blockentity instanceof AbstractRSJukeboxBE jukebox) {
-            Item item = jukebox.getPlayingItem().getItem();
-            if (item instanceof RecordItem recorditem) {
-                return recorditem.getAnalogOutput();
+            ItemStack item = jukebox.getPlayingItem();
+            if (JukeboxPlayableUtils.test(item)) {
+                var song = JukeboxPlayableUtils.getSong(pLevel, item);
+                if (song == null) return 0;
+                return song.comparatorOutput();
             }
         }
 

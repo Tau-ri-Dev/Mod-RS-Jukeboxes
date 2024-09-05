@@ -7,6 +7,7 @@ import dev.tauri.rsjukeboxes.packet.packets.JukeboxActionPacketToServer;
 import dev.tauri.rsjukeboxes.screen.element.IconButton;
 import dev.tauri.rsjukeboxes.screen.util.GuiHelper;
 import dev.tauri.rsjukeboxes.util.I18n;
+import dev.tauri.rsjukeboxes.util.JukeboxPlayableUtils;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,7 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.RecordItem;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import static dev.tauri.rsjukeboxes.screen.util.GuiHelper.*;
 
 public class TieredJukeboxGui extends AbstractContainerScreen<TieredJukeboxContainer> {
 
-    public static final ResourceLocation BUTTONS_TEXTURE = new ResourceLocation(RSJukeboxes.MOD_ID, "textures/gui/buttons.png");
+    public static final ResourceLocation BUTTONS_TEXTURE = ResourceLocation.fromNamespaceAndPath(RSJukeboxes.MOD_ID, "textures/gui/buttons.png");
 
     public final List<IconButton> buttons = new ArrayList<>();
 
@@ -74,14 +75,15 @@ public class TieredJukeboxGui extends AbstractContainerScreen<TieredJukeboxConta
         var progressBarX = 8 + leftPos;
         float progressBarWidth = 0f;
         if (menu.jukebox.getLevel() != null && menu.jukebox.getRendererState().playing) {
-            if (Item.byId(menu.jukebox.getRendererState().discItemId) instanceof RecordItem record) {
+            var song = JukeboxPlayableUtils.getSong(menu.jukebox.getLevel(), new ItemStack(Item.byId(menu.jukebox.getRendererState().discItemId)));
+            if (song != null) {
                 var progress = (float) (menu.jukebox.getLevel().getGameTime() - menu.jukebox.getRendererState().playingStarted);
-                var length = (float) record.getLengthInTicks();
+                var length = (float) song.lengthInTicks();
                 if (length != 0) {
                     progressBarWidth = (progress / length);
                     if (progressBarWidth > 1) progressBarWidth = 1;
                     if (progressBarWidth < 0) progressBarWidth = 0;
-                    recordTime = Pair.of((long) progress, (long) record.getLengthInTicks());
+                    recordTime = Pair.of((long) progress, (long) song.lengthInTicks());
                 }
             }
         }

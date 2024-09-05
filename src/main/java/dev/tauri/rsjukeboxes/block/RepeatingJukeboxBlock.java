@@ -6,18 +6,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-@SuppressWarnings("deprecation")
 public class RepeatingJukeboxBlock extends AbstractRSJukebox {
-    public RepeatingJukeboxBlock() {
-        super(Properties.copy(Blocks.JUKEBOX));
-    }
-
     @Override
     public BlockEntity createBlockEntity(BlockPos pPos, BlockState pState) {
         return new RepeatingJukeboxBE(pPos, pState);

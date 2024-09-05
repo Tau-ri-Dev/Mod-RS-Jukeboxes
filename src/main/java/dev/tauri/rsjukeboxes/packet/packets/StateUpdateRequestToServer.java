@@ -11,7 +11,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.NetworkDirection;
 import org.apache.commons.lang3.NotImplementedException;
 
 public class StateUpdateRequestToServer extends PositionedPacket {
@@ -41,7 +40,6 @@ public class StateUpdateRequestToServer extends PositionedPacket {
 
     @Override
     public void handle(CustomPayloadEvent.Context ctx) {
-        if (ctx.getDirection() != NetworkDirection.PLAY_TO_SERVER) return;
         ctx.setPacketHandled(true);
         ServerPlayer player = ctx.getSender();
         if (player != null) {

@@ -18,6 +18,6 @@ public class Tier3JukeboxBE extends AbstractTieredJukeboxBE {
 
     @Override
     public ResourceLocation getGuiBackground() {
-        return new ResourceLocation(RSJukeboxes.MOD_ID, "textures/gui/jukebox_tier_3_gui.png");
+        return ResourceLocation.fromNamespaceAndPath(RSJukeboxes.MOD_ID, "textures/gui/jukebox_tier_3_gui.png");
     }
 }
