@@ -14,8 +14,6 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -48,16 +46,16 @@ public abstract class AbstractTieredJukeboxBlock extends AbstractRSJukebox {
             var signal = e.getValue();
             switch (direction) {
                 case NORTH:
-                    jukeboxBE.setPowered(signal > 0);
+                    tieredJukeboxBE.setPowered(signal > 0);
                     break;
                 case EAST:
                     if (signal > 0) {
-                        jukeboxBE.selectPreviousTrack();
+                        tieredJukeboxBE.selectPreviousTrack();
                     }
                     break;
                 case WEST:
                     if (signal > 0) {
-                        jukeboxBE.selectNextTrack();
+                        tieredJukeboxBE.selectNextTrack();
                     }
                     break;
                 default:

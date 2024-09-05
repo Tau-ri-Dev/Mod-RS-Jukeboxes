@@ -6,6 +6,7 @@ import dev.tauri.rsjukeboxes.registry.TabRegistry;
 import dev.tauri.rsjukeboxes.util.ITickable;
 import dev.tauri.rsjukeboxes.util.ItemHelper;
 import dev.tauri.rsjukeboxes.util.JukeboxPlayableUtils;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -21,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -34,11 +36,12 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
-@SuppressWarnings("deprecation")
 public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedItem {
     public AbstractRSJukebox() {
         super(Properties.ofFullCopy(Blocks.JUKEBOX).isRedstoneConductor((pState, pLevel, pPos) -> false));
@@ -63,7 +66,8 @@ public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedI
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
+    @ParametersAreNonnullByDefault
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
         pBuilder.add(HORIZONTAL_FACING);
     }
