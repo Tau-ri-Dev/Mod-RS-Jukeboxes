@@ -1,8 +1,8 @@
 package dev.tauri.rsjukeboxes.registry;
 
 import dev.tauri.rsjukeboxes.block.*;
-import dev.tauri.rsjukeboxes.item.RSJBlockItem;
 import dev.tauri.rsjukeboxes.item.ITabbedItem;
+import dev.tauri.rsjukeboxes.item.RSJBlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -26,7 +26,7 @@ public class BlockRegistry {
 
     public static void register(IEventBus bus) {
         for (RegistryObject<Block> i : BlockRegistry.REGISTER.getEntries().stream().toList()) {
-            ItemRegistry.REGISTER.register(i.getId().getPath(),
+            ItemRegistry.REGISTER.register(i.getId().toString().replaceFirst(MOD_ID + ":", ""),
                     () -> {
                         RegistryObject<CreativeModeTab> tab = null;
                         if (i.get() instanceof ITabbedItem t) {

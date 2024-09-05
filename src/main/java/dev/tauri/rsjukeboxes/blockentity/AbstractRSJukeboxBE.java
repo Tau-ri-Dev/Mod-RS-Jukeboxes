@@ -13,6 +13,7 @@ import dev.tauri.rsjukeboxes.util.JukeboxPlayableUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -121,7 +122,11 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapa
         playingStarted = Objects.requireNonNull(level).getGameTime();
         this.setChanged();
         this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
-        this.level.levelEvent(LevelEvent.SOUND_PLAY_JUKEBOX_SONG, getBlockPos(), Item.getId(this.getPlayingItem().getItem()));
+        var song = JukeboxPlayableUtils.getSong(level, getPlayingItem());
+        if (song != null) {
+            int songId = level.registryAccess().registryOrThrow(Registries.JUKEBOX_SONG).getId(song);
+            this.level.levelEvent(LevelEvent.SOUND_PLAY_JUKEBOX_SONG, getBlockPos(), songId);
+        }
         sendUpdate();
     }
 
