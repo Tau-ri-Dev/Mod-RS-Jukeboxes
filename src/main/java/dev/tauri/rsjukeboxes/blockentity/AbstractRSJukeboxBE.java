@@ -9,31 +9,15 @@ import dev.tauri.rsjukeboxes.state.State;
 import dev.tauri.rsjukeboxes.state.StateProviderInterface;
 import dev.tauri.rsjukeboxes.state.StateTypeEnum;
 import dev.tauri.rsjukeboxes.util.ITickable;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.RecordItem;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.JukeboxBlock;
-import net.minecraft.world.level.block.LevelEvent;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 
-public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, ICapabilityProvider, StateProviderInterface {
+public class AbstractRSJukeboxBE extends TileEntity implements ITickable, ICapabilityProvider, StateProviderInterface {
     public AbstractRSJukeboxBE(BlockEntityType<?> type, BlockPos pPos, BlockState pBlockState) {
         super(type, pPos, pBlockState);
     }

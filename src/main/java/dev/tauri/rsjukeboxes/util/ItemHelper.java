@@ -1,43 +1,46 @@
 package dev.tauri.rsjukeboxes.util;
 
-import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.realmsclient.gui.ChatFormatting;
 import dev.tauri.rsjukeboxes.RSJukeboxes;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.client.util.ITooltipFlag;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("unused")
 public class ItemHelper {
     public interface TooltipFunction {
-        List<Component> run();
+        List<String> run();
     }
 
-    public static void applyGenericToolTip(String itemName, List<Component> components, TooltipFlag tooltipFlag) {
+    public static void applyGenericToolTip(String itemName, List<String> components, ITooltipFlag tooltipFlag) {
         applyToolTip(
-                List.of(Component.translatable("item." + RSJukeboxes.MOD_ID + "." + itemName + ".tooltip").withStyle(ChatFormatting.GRAY)),
-                I18n.getAdvancedTooltip("item." + RSJukeboxes.MOD_ID + "." + itemName + ".tooltip.extended", (i, line) -> line.withStyle(ChatFormatting.GRAY)),
+                Collections.singletonList(ChatFormatting.GRAY + I18n.format("item." + RSJukeboxes.MOD_ID + "." + itemName + ".tooltip")),
+                I18n.getAdvancedTooltip("item." + RSJukeboxes.MOD_ID + "." + itemName + ".tooltip.extended", (i, line) -> ChatFormatting.GRAY + line),
                 components, tooltipFlag
         );
     }
 
-    public static void applyToolTip(@Nullable List<Component> tooltip, @Nullable I18n.AdvancedTooltip tooltipAdvanced, List<Component> components, TooltipFlag tooltipFlag) {
+    public static void applyToolTip(@Nullable List<String> tooltip, @Nullable I18n.AdvancedTooltip tooltipAdvanced, List<String> components, ITooltipFlag tooltipFlag) {
         if (tooltip == null) return;
-        int key = InputConstants.KEY_LSHIFT;
+        int key = Keyboard.KEY_LSHIFT;
         components.addAll(tooltip);
-        boolean isKeyDown = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key);
+        boolean isKeyDown = Keyboard.isKeyDown(key);
         if ((isKeyDown || tooltipFlag.isAdvanced()) && tooltipAdvanced != null && tooltipAdvanced.formatLines() != null) {
             int width = tooltipAdvanced.getWidth() + 2;
-            components.add(Component.literal(" ".repeat(width)).withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.STRIKETHROUGH));
+            StringBuilder spaces = new StringBuilder();
+            for (int i = 0; i < width; i++) {
+                spaces.append(" ");
+            }
+            components.add(ChatFormatting.DARK_GRAY.toString() + ChatFormatting.STRIKETHROUGH + spaces);
             components.addAll(tooltipAdvanced.formatLines());
-            components.add(Component.literal(" ".repeat(width)).withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.STRIKETHROUGH));
+            components.add(ChatFormatting.DARK_GRAY.toString() + ChatFormatting.STRIKETHROUGH + spaces);
         } else if (tooltipAdvanced != null && tooltipAdvanced.formatLines() != null) {
-            String text = Component.translatable("tooltip.general.hold_shift").getString();
-            text = text.replaceAll("%key%", InputConstants.Type.KEYSYM.getOrCreate(key).getDisplayName().getString());
-            components.add(Component.literal(text).withStyle(ChatFormatting.DARK_GRAY).withStyle(ChatFormatting.ITALIC));
+            String text = I18n.format("tooltip.general.hold_shift");
+            text = text.replaceAll("%key%", Keyboard.getKeyName(key));
+            components.add(ChatFormatting.DARK_GRAY.toString() + ChatFormatting.ITALIC + text);
         }
     }
 }

@@ -1,19 +1,17 @@
 package dev.tauri.rsjukeboxes.util;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class I18n {
     public static String format(String s) {
-        return Component.translatable(s).getString();
+        return net.minecraft.client.resources.I18n.format(s);
     }
 
     public interface ILineFormat {
-        MutableComponent apply(int lineNumber, MutableComponent component);
+        String apply(int lineNumber, String component);
     }
 
     public static class AdvancedTooltip {
@@ -26,25 +24,25 @@ public class I18n {
         }
 
         public int getWidth() {
-            List<Component> l = formatLines();
+            List<String> l = formatLines();
             int textWidth = 0;
-            for (Component c : l) {
-                int ii = Minecraft.getInstance().font.width(c);
+            for (String c : l) {
+                int ii = Minecraft.getMinecraft().fontRenderer.getStringWidth(c);
                 if (ii > textWidth) {
                     textWidth = ii;
                 }
             }
-            int spaceWidth = Minecraft.getInstance().font.width(" ");
+            int spaceWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(" ");
             return (int) Math.ceil((double) textWidth / (double) spaceWidth);
         }
 
-        public List<Component> formatLines() {
+        public List<String> formatLines() {
             String text = format(key);
             String[] lines = text.split("%nl%");
-            List<Component> linesC = new ArrayList<>();
+            List<String> linesC = new ArrayList<>();
             int i = 0;
             for (String line : lines)
-                linesC.add(lineFormatting.apply(++i, Component.literal(" " + line)));
+                linesC.add(lineFormatting.apply(++i, (" " + line)));
             if (lines.length > 0 && lines[0].equals(key)) return null;
             return linesC;
         }
