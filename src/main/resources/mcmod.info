@@ -1,0 +1,14 @@
+[
+  {
+    "modid": "${mod_id}",
+    "name": "${mod_name}",
+    "description": "${mod_description}",
+    "version": "${mod_version}",
+    "mcversion": "${minecraft_version_range}",
+    "authorList": "${mod_authors}",
+    "screenshots": [],
+    "parent":"",
+    "dependencies": [
+    ]
+  }
+]
