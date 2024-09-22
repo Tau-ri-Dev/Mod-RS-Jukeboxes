@@ -1,6 +1,7 @@
 package dev.tauri.rsjukeboxes.blockentity;
 
 import dev.tauri.rsjukeboxes.RSJukeboxes;
+import dev.tauri.rsjukeboxes.compatibility.VinURLCompat;
 import dev.tauri.rsjukeboxes.packet.RSJPacketHandler;
 import dev.tauri.rsjukeboxes.packet.RSJPacketHandlerClient;
 import dev.tauri.rsjukeboxes.packet.packets.StateUpdatePacketToClient;
@@ -104,7 +105,7 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, State
     protected boolean shouldRecordStopPlaying() {
         if (!isPlaying) return false;
         if (getPlayingItem().isEmpty()) return true;
-        return Objects.requireNonNull(world).getTime() >= this.playingStarted + (long) ((MusicDiscItem) getPlayingItem().getItem()).getSongLengthInTicks() + getDelayBetweenRecords();
+        return Objects.requireNonNull(world).getTime() >= (this.playingStarted + (long) ((MusicDiscItem) getPlayingItem().getItem()).getSongLengthInTicks() + getDelayBetweenRecords() + (VinURLCompat.isCustomDisc(getPlayingItem().getItem()) ? 3 * 60 * 20 : 0));
     }
 
     protected void setHasRecordBlockState(boolean pHasRecord) {
@@ -118,6 +119,9 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, State
         if (isPlaying) return;
         isPlaying = true;
         if (getPlayingItem().isEmpty()) return;
+
+        VinURLCompat.playDisc(this);
+
         playingStarted = Objects.requireNonNull(world).getTime();
         this.markDirty();
         this.world.updateNeighborsAlways(this.getPos(), this.getCachedState().getBlock());
@@ -128,6 +132,9 @@ public class AbstractRSJukeboxBE extends BlockEntity implements ITickable, State
     public void stopPlaying() {
         if (!isPlaying) return;
         isPlaying = false;
+
+        VinURLCompat.stopDisc(this);
+
         Objects.requireNonNull(this.world).emitGameEvent(GameEvent.JUKEBOX_STOP_PLAY, this.getPos(), GameEvent.Emitter.of(this.getCachedState()));
         this.playingStopped = world.getTime();
         this.markDirty();
