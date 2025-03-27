@@ -14,9 +14,9 @@ public class RSJukeboxes implements ModInitializer {
     @Override
     public void onInitialize() {
         logger = LoggerFactory.getLogger(MOD_NAME);
-        TabRegistry.register();
         BlockRegistry.register();
         ItemRegistry.register();
+        TabRegistry.register();
         BlockEntityRegistry.register();
         MenuTypeRegistry.register();
 
