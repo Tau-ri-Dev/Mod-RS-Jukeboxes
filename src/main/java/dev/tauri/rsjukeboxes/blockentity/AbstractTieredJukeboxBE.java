@@ -1,14 +1,21 @@
 package dev.tauri.rsjukeboxes.blockentity;
 
+import dev.tauri.rsjukeboxes.integration.ComputerDeviceHolder;
+import dev.tauri.rsjukeboxes.integration.ComputerDeviceProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-public abstract class AbstractTieredJukeboxBE extends AbstractRSJukeboxBE {
+public abstract class AbstractTieredJukeboxBE extends AbstractRSJukeboxBE implements ComputerDeviceProvider {
     protected boolean isPowered = false;
     protected boolean lastPowerState = false;
 
@@ -90,6 +97,34 @@ public abstract class AbstractTieredJukeboxBE extends AbstractRSJukeboxBE {
         if (level == null || level.getGameTime() - lastTrackChangeTime < 2) return;
         lastTrackChangeTime = level.getGameTime();
         selectFirstPlayableSlot(true);
+    }
+
+    @Override
+    public @Nonnull <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
+        var computerCaps = getDeviceHolder().getOrCreateDeviceBasedOnCap(capability);
+        if (computerCaps.isPresent())
+            return computerCaps;
+        return super.getCapability(capability, facing);
+    }
+
+    // ----------------------------------------------
+    // OC/CC
+
+    public ComputerDeviceHolder computerDeviceHolder;
+
+    public void createDeviceHolder() {
+        computerDeviceHolder = new ComputerDeviceHolder(this);
+    }
+
+    @Override
+    public ComputerDeviceHolder getDeviceHolder() {
+        if (computerDeviceHolder == null) createDeviceHolder();
+        return computerDeviceHolder;
+    }
+
+    @Override
+    public String getDeviceType() {
+        return "JUKEBOX";
     }
 
     @Override

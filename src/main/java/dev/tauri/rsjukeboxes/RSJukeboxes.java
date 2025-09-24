@@ -1,5 +1,7 @@
 package dev.tauri.rsjukeboxes;
 
+import dev.tauri.rsjukeboxes.integration.Integrations;
+import dev.tauri.rsjukeboxes.integration.cctweaked.CCIntegrationWrapper;
 import dev.tauri.rsjukeboxes.packet.RSJPacketHandler;
 import dev.tauri.rsjukeboxes.registry.*;
 import dev.tauri.rsjukeboxes.screen.container.TieredJukeboxGui;
@@ -23,6 +25,10 @@ public class RSJukeboxes {
     public static final String MC_VERSION = "1.20.1";
     public static Logger logger;
 
+    public static final String CC_WRAPPER_LOADED = "dev.tauri.rsjukeboxes.integration.cctweaked.CCIntegrationLoaded";
+    public static final String CC_WRAPPER_NOT_LOADED = "dev.tauri.rsjukeboxes.integration.cctweaked.CCIntegrationNotLoaded";
+    public static CCIntegrationWrapper ccWrapper;
+
     public RSJukeboxes() {
         logger = LoggerFactory.getLogger(MOD_NAME);
 
@@ -34,6 +40,8 @@ public class RSJukeboxes {
 
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        Integrations.tryLoad();
 
         ItemRegistry.register(modEventBus);
         BlockRegistry.register(modEventBus);
