@@ -2,6 +2,7 @@ package dev.tauri.rsjukeboxes.blockentity;
 
 import dev.tauri.rsjukeboxes.integration.ComputerDeviceHolder;
 import dev.tauri.rsjukeboxes.integration.ComputerDeviceProvider;
+import dev.tauri.rsjukeboxes.util.PlaySlotSelectResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -66,7 +67,14 @@ public abstract class AbstractTieredJukeboxBE extends AbstractRSJukeboxBE implem
     }
 
     public void stopPlayingAndDoNotSkip() {
+        getDeviceHolder().sendSignal("jukebox_playing_stop", "Stopped playing disc");
         super.stopPlaying();
+    }
+
+    @Override
+    public void startPlaying() {
+        getDeviceHolder().sendSignal("jukebox_playing_start", "Started playing disc");
+        super.startPlaying();
     }
 
     protected void selectFirstPlayableSlot(boolean previous) {
@@ -81,10 +89,27 @@ public abstract class AbstractTieredJukeboxBE extends AbstractRSJukeboxBE implem
             if (itemStackHandler.getStackInSlot(slot).isEmpty()) continue;
             if (slot == currentSlotPlaying) continue;
             this.currentSlotPlaying = slot;
+            getDeviceHolder().sendSignal("jukebox_slot_switch", slot, "Switched slot to " + slot);
             break;
         }
         setChanged();
         sendUpdate();
+    }
+
+    public PlaySlotSelectResult setSlotToPlay(int slot) {
+        if (level == null || level.isClientSide) return PlaySlotSelectResult.CLIENT;
+        if (slot >= getContainerSize()) return PlaySlotSelectResult.OUT_OF_BOUNDS;
+        if (itemStackHandler.getStackInSlot(slot).isEmpty()) return PlaySlotSelectResult.NO_DISC;
+        stopPlayingAndDoNotSkip();
+        if (slot == currentSlotPlaying) {
+            startPlaying();
+            return PlaySlotSelectResult.OK;
+        }
+        this.currentSlotPlaying = slot;
+        getDeviceHolder().sendSignal("jukebox_slot_switch", slot, "Switched slot to " + slot);
+        setChanged();
+        sendUpdate();
+        return PlaySlotSelectResult.OK;
     }
 
     public void selectNextTrack() {
