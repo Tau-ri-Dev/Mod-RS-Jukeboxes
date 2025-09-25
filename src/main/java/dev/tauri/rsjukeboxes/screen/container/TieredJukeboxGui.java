@@ -52,7 +52,7 @@ public class TieredJukeboxGui extends AbstractContainerScreen<TieredJukeboxConta
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         GuiHelper.graphics = graphics;
         RenderSystem.disableDepthTest();
-        renderTransparentBackground(graphics, this);
+        renderBackground(graphics);
 
         super.render(graphics, mouseX, mouseY, partialTicks);
         renderTooltip(graphics, mouseX, mouseY);
