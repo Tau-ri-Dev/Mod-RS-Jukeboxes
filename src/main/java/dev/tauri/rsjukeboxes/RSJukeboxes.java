@@ -32,11 +32,9 @@ public class RSJukeboxes {
     public RSJukeboxes() {
         logger = LoggerFactory.getLogger(MOD_NAME);
 
-        ModList.get().getModContainerById(MOD_ID).ifPresentOrElse(container -> {
-            MOD_VERSION = MC_VERSION + "-" + container.getModInfo().getVersion().getQualifier();
-        }, () -> {
+        ModList.get().getModContainerById(MOD_ID).ifPresentOrElse(container -> MOD_VERSION = MC_VERSION + "-" + container.getModInfo().getVersion().getQualifier(), () -> {
         });
-        logger.info("Loading RSJukeboxes version " + MOD_VERSION);
+        logger.info("Loading RSJukeboxes version {}", MOD_VERSION);
 
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -58,9 +56,7 @@ public class RSJukeboxes {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            event.enqueueWork(() -> {
-                MenuScreens.register(MenuTypeRegistry.TIERED_JUKEBOX_MENU_TYPE.get(), TieredJukeboxGui::new);
-            });
+            event.enqueueWork(() -> MenuScreens.register(MenuTypeRegistry.TIERED_JUKEBOX_MENU_TYPE.get(), TieredJukeboxGui::new));
         }
     }
 }
