@@ -5,7 +5,6 @@ import dev.tauri.rsjukeboxes.item.ITabbedItem;
 import dev.tauri.rsjukeboxes.registry.TabRegistry;
 import dev.tauri.rsjukeboxes.util.ITickable;
 import dev.tauri.rsjukeboxes.util.ItemHelper;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -121,7 +120,7 @@ public abstract class AbstractRSJukebox extends JukeboxBlock implements ITabbedI
     @Override
     @ParametersAreNonnullByDefault
     public int getSignal(BlockState pState, BlockGetter pLevel, BlockPos pPos, Direction direction) {
-        if (pLevel instanceof ClientLevel) return 0;
+        if (!(pLevel instanceof Level level) || level.isClientSide()) return 0;
         var jukeboxBE = getJukeboxBE(pLevel, pPos);
         if (jukeboxBE == null) return 0;
         var blockDirection = pState.getValue(HORIZONTAL_FACING);
